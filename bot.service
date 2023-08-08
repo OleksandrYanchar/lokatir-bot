@@ -1,0 +1,13 @@
+[Unit]
+Description=bot template host
+After=network.target
+
+[Service]
+User=...
+Environment="TOKEN= " # tg token
+WorkingDirectory= # pwd
+ExecStart= # pwd/venv/bin/python name_of_the_start_file.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

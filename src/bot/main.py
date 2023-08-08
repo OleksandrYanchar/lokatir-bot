@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 from telebot import types
 from settings import questions, answers
+from telebot import types
+
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
@@ -14,7 +16,8 @@ user_data = {}  # Store current question and score for each user
 def start(message):
     markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     start_button = types.KeyboardButton('/quiz')
-    markup.add(start_button)
+    creators_button = types.KeyboardButton('/creators')  # Нова кнопка
+    markup.add(start_button, creators_button)  # Додаємо кнопку до розмітки
 
     bot.send_message(message.chat.id, 'Привіт, я бот-вікторина Локатира романа.', reply_markup=markup)
 
@@ -43,14 +46,14 @@ def send_question(user_id):
 def send_result_message(user_id, score):
     if -1000 < score <= 0:
         result_message = 'Ви взагалі не знаєте Романа, ідіть підівчіться та не позортесь'
+        bot.send_photo(user_id, photo=open('../pictures/pidyob.png' ,'rb'))
     elif 0 < score <= 10:
         result_message = 'Дуже слабенько, ви напевно лише вчора дізналися хто такий Роман'
-        bot.send_photo(user_id, photo=open('../pictures/pidyob.png' ,'rb'))
+        bot.send_photo(user_id, photo=open('../pictures/ok.png', 'rb'))
     elif 10 < score <= 30:
         result_message = 'Ви знаєте Романа не перший день, але все одно цього недостатньо'
         bot.send_photo(user_id, photo=open('../pictures/patriot.png', 'rb'))
     elif 30 < score <= 70:
-        bot.send_photo(user_id, photo=open('../pictures/ok.png', 'rb'))
         result_message = 'Непогано, ще трішки і ви зможете сказати, що ви фанат Романа'
         bot.send_photo(user_id, photo=open('../pictures/dovolniy.png', 'rb'))
     elif 70 < score <= 130:
@@ -65,7 +68,7 @@ def send_result_message(user_id, score):
 
     bot.send_message(user_id, f'Ваш рахунок: {score}')
 
-    bot.send_message(user_id, result_message)
+    bot.send_message(user_id, f"{result_message}\n https://t.me/lokatir_bot")
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -80,5 +83,21 @@ def answer(call):
         user_info['score'] += answers[question][answer]
         user_info['question_index'] += 1
         send_question(user_id)
+
+@bot.message_handler(commands=['creators'])
+def creators(message):
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    creator_links = [
+        types.InlineKeyboardButton("OleksandrYanchar GitHub", url="https://github.com/OleksandrYanchar"),
+        types.InlineKeyboardButton("YuriiDorosh GitHub", url="https://github.com/YuriiDorosh"),
+        types.InlineKeyboardButton("saintqqe Instagram", url="https://www.instagram.com/saintqqe/"),
+        types.InlineKeyboardButton("y_u_r_a111 Instagram", url="https://www.instagram.com/y_u_r_a111/"),
+        types.InlineKeyboardButton("saintqqe Twitch", url="https://www.twitch.tv/saintqqe"),
+        types.InlineKeyboardButton("fortnite_dota Twitch", url="https://www.twitch.tv/fortnite_dota")
+    ]
+
+    markup.add(*creator_links)  # Додаємо кнопки у розмітку
+
+    bot.send_message(message.chat.id, "Посилання на авторів бота:", reply_markup=markup)
 
 bot.polling()

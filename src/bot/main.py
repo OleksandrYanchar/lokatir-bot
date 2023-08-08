@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from telebot import types
 from settings import questions, answers
 from telebot import types
-
+from datetime import datetime
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
@@ -20,13 +20,29 @@ def start(message):
     markup.add(start_button, creators_button)  # Додаємо кнопку до розмітки
 
     bot.send_message(message.chat.id, 'Привіт, я бот-вікторина Локатира романа.', reply_markup=markup)
+    with open('results.txt', 'a') as file:
+        file.write(f" @{message.from_user.username}  ID : {message.chat.id} just started bot at {datetime.now()}\n")
 
+
+def check_create_folder_and_file(folder_name, file_name):
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+    file_path = os.path.join(folder_name, file_name)
+    if not os.path.exists(file_path):
+        with open(file_path, 'w'):
+            pass
+
+
+check_create_folder_and_file('stats', 'results.txt')
 
 @bot.message_handler(commands=['quiz'])
 def start(message):
     bot.send_message(message.chat.id, 'Квіз розпочато.')
-    user_data[message.chat.id] = {'question_index': 0, 'score': 0}
+    user_data[message.chat.id] = {'question_index': 0, 'score': 0, 'username': message.from_user.username}  # Set the username here
     send_question(message.chat.id)
+    with open('results.txt', 'a') as file:
+        file.write(f" @{message.from_user.username} , ID : {message.chat.id} just started quiz at {datetime.now()}\n")
+
 
 def send_question(user_id):
     user_info = user_data.get(user_id, {'question_index': 0, 'score': 0})
@@ -43,7 +59,10 @@ def send_question(user_id):
     else:
         send_result_message(user_id, user_info['score'])
 
+
 def send_result_message(user_id, score):
+    user_info = user_data.get(user_id, {'username': 'Unknown', 'score': 0})
+    username = user_info['username']
     if -1000 < score <= 0:
         result_message = 'Ви взагалі не знаєте Романа, ідіть підівчіться та не позортесь'
         bot.send_photo(user_id, photo=open('../pictures/pidyob.png' ,'rb'))
@@ -67,8 +86,10 @@ def send_result_message(user_id, score):
         bot.send_photo(user_id, photo=open('../pictures/minus.jpg', 'rb'))
 
     bot.send_message(user_id, f'Ваш рахунок: {score}')
-
-    bot.send_message(user_id, f"{result_message}\n https://t.me/lokatir_bot")
+    result_text = f"{result_message}\n https://t.me/lokatir_bot"
+    bot.send_message(user_id, result_text)
+    with open('results.txt', 'a') as file:
+        file.write(f" @{username} {user_id} finished quiz, with score: {score} at {datetime.now()}\n")
 
 
 @bot.callback_query_handler(func=lambda call: True)

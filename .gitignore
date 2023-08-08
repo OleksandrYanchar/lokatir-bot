@@ -12,6 +12,8 @@
 src/images/readme/old
 
 .idea
+results.txt
+
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

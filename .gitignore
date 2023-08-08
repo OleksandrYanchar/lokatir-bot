@@ -1,5 +1,17 @@
-# Created by https://www.toptal.com/developers/gitignore/api/python
-# Edit at https://www.toptal.com/developers/gitignore?templates=python
+### PyCharm ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# Files inside screenshots and recordings folders
+/recordings/*
+!/recordings/.gitkeep
+/screenshots/*
+!/screenshots/.gitkeep
+
+# Old pictures which used for README
+src/images/readme/old
+
+.idea
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -132,11 +144,11 @@ ENV/
 env.bak/
 venv.bak/
 
-# Spyder project settings
+# Spyder project settings_interface
 .spyderproject
 .spyproject
 
-# Rope project settings
+# Rope project settings_interface
 .ropeproject
 
 # mkdocs documentation
@@ -173,4 +185,13 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
-# End of https://www.toptal.com/developers/gitignore/api/python
+### venv ###
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg

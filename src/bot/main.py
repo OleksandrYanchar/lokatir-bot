@@ -24,16 +24,8 @@ def start(message):
         file.write(f" @{message.from_user.username}  ID : {message.chat.id} just started bot at {datetime.now()}\n")
 
 
-def check_create_folder_and_file(folder_name, file_name):
-    if not os.path.exists(folder_name):
-        os.makedirs(folder_name)
-    file_path = os.path.join(folder_name, file_name)
-    if not os.path.exists(file_path):
-        with open(file_path, 'w'):
-            pass
 
 
-check_create_folder_and_file('stats', 'results.txt')
 
 @bot.message_handler(commands=['quiz'])
 def start(message):

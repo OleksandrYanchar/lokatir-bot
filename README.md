@@ -1,3 +1,15 @@
+<div align="center">
+
+
+![picture alt](src/pictures/ava.jpg)
+
+# Bot in Telegram:
+
+```
+https://t.me/lokatir_bot
+```
+
+
 # Setting Up and Running the Lokatir Bot
 
 ![picture alt](src/pictures/pidyob.png)
@@ -53,3 +65,6 @@ cd src/bot
 python3 main.py 
 ```
 
+![picture alt](src/pictures/bratva.png)
+
+</div>

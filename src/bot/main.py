@@ -3,17 +3,17 @@ import os
 from dotenv import load_dotenv
 from telebot import types
 from settings import questions, answers
+from telebot import types
 from datetime import datetime
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
-admins_ID = os.getenv("admins_ID")
-admins_ID = [int(id) for id in admins_ID.split(',')]
-
 user_data = {}  # Store current question and score for each user
 
+admins_ID = os.getenv("admins_ID")
+admins_ID = [int(id) for id in admins_ID.split(',')]
 
 
 @bot.message_handler(commands=['start'])

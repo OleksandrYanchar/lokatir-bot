@@ -24,7 +24,9 @@ def start(message):
     markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     start_button = types.KeyboardButton('/quiz')
     creators_button = types.KeyboardButton('/creators')  # Нова кнопка
-    markup.add(start_button, creators_button)  # Додаємо кнопку до розмітки
+    stats_button = types.KeyboardButton('/stats')
+    markup.add(start_button, creators_button, stats_button)
+
 
     bot.send_message(message.chat.id, 'Привіт, я бот-вікторина Локатира романа.', reply_markup=markup)
     with open('results.txt', 'a') as file:
@@ -96,7 +98,7 @@ def send_result_message(user_id, score):
         result_message = 'Ви Локатир Романа, або його кращий друг'
         bot.send_photo(user_id, photo=open('../pictures/bratva.png', 'rb'))
     else:
-        result_message = 'Сама ти нікому не потрібна, шмара'
+        result_message = 'Сама ти нахуй нікому не потрібна, шмара'
         bot.send_photo(user_id, photo=open('../pictures/minus.jpg', 'rb'))
 
     bot.send_message(user_id, f'Ваш рахунок: {score}')

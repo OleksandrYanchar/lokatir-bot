@@ -15,9 +15,6 @@ user_data = {}  # Store current question and score for each user
 admins_ID = os.getenv("admins_ID")
 admins_ID = [int(id) for id in admins_ID.split(',')]
 
-current_time = datetime.now()
-time = current_time + timedelta(hours=2)
-
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -25,14 +22,14 @@ def start(message):
     start_button = types.KeyboardButton('/quiz')
     creators_button = types.KeyboardButton('/creators')  # Нова кнопка
     stats_button = types.KeyboardButton('/stats')
-    markup.add(start_button, creators_button, stats_button)
+    markup.add(start_button, creators_button, stats_button   )
 
 
     bot.send_message(message.chat.id, 'Привіт, я бот-вікторина Локатира романа.', reply_markup=markup)
     with open('results.txt', 'a') as file:
         file.write(f" @{message.chat.username} ID: {message.chat.id}\n" 
                    f"first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
-                   f"Just started bot at {time}\n\n\n")
+                   f"Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
 
 
 
@@ -47,7 +44,7 @@ def start(message):
     with open('results.txt', 'a') as file:
         file.write(f" @{message.chat.username} ID: {message.chat.id}\n" 
                    f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
-                   f" Just started quiz at {time}\n\n\n")
+                   f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
 
 @bot.message_handler(commands=['stats'])
 def stats(message):
@@ -107,7 +104,7 @@ def send_result_message(user_id, score):
     with open('results.txt', 'a') as file:
         file.write(f" @{username} ID: {user_id}\n"
                    f" first name : {first_name} last name: {last_name}\n"
-                   f" finished quiz, with score: {score} at {time}\n\n\n")
+                   f" finished quiz, with score: {score} at {datetime.now() + timedelta(hours=2)}\n\n\n")
 
 
 @bot.callback_query_handler(func=lambda call: True)

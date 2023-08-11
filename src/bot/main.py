@@ -21,9 +21,9 @@ admins_ID = [int(id) for id in admins_ID.split(',')]
 def start(message):
     markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     start_button = types.KeyboardButton('/quiz')
-    creators_button = types.KeyboardButton('/creators')  # Нова кнопка
+    creators_button = types.KeyboardButton('/creators')
     stats_button = types.KeyboardButton('/stats')
-    markup.add(start_button, creators_button, stats_button   )
+    markup.add(start_button, creators_button, stats_button)
 
 
     bot.send_message(message.chat.id, 'Привіт, я бот-вікторина Локатира романа.', reply_markup=markup)
@@ -47,9 +47,13 @@ def start(message):
 
 
 @bot.message_handler(commands=['quiz'])
-def start(message):
+def start_quiz(message):
     bot.send_message(message.chat.id, 'Квіз розпочато.')
-    user_data[message.chat.id] = {'question_index': 0, 'score': 0, 'username': message.from_user.username}  #
+    user_data[message.chat.id] = {'question_index': 0, 'score': 0, 'username': message.from_user.username}
+    chat_data[message.chat.id] = {'question_index': 0, 'score': 0, 'chat_title': message.chat.title,
+                                  'chat_tag': message.chat.username,
+                                  'chat_partisipants': bot.get_chat_members_count(message.chat.id),
+                                  'chat_id': message.chat.id,}
     send_question(message.chat.id)
     for IDs in admins_ID:
         if message.chat.type == 'private':
@@ -89,7 +93,7 @@ def send_question(user_id):
         for ans in answers[question]:
             keyboard.add(types.InlineKeyboardButton(text=ans, callback_data=ans))
 
-        formatted_question = f'{question_index + 1}/15. <b>{question}</b>'  # Додайте тег <b> для жирного шрифту
+        formatted_question = f'{question_index + 1}/16. <b>{question}</b>'  # Додайте тег <b> для жирного шрифту
         bot.send_message(user_id, formatted_question, reply_markup=keyboard, parse_mode='HTML')
     else:
         send_result_message(user_id, user_info['score'])
@@ -107,16 +111,16 @@ def send_result_message(user_id, score):
     elif 0 < score <= 10:
         result_message = 'Дуже слабенько, ви напевно лише вчора дізналися хто такий Роман'
         bot.send_photo(user_id, photo=open('../pictures/ok.png', 'rb'))
-    elif 10 < score <= 30:
+    elif 10 < score <= 35:
         result_message = 'Ви знаєте Романа не перший день, але все одно цього недостатньо'
         bot.send_photo(user_id, photo=open('../pictures/patriot.png', 'rb'))
-    elif 30 < score <= 70:
+    elif 30 < score <= 72:
         result_message = 'Непогано, ще трішки і ви зможете сказати, що ви фанат Романа'
         bot.send_photo(user_id, photo=open('../pictures/dovolniy.png', 'rb'))
     elif 70 < score <= 130:
         result_message = 'Ви справжній фанат Романа'
         bot.send_photo(user_id, photo=open('../pictures/cool_1.png', 'rb'))
-    elif 130 < score <= 140:
+    elif 130 < score <= 142:
         result_message = 'Ви Локатир Романа, або його кращий друг'
         bot.send_photo(user_id, photo=open('../pictures/bratva.png', 'rb'))
     else:

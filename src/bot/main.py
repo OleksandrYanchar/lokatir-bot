@@ -64,7 +64,7 @@ def send_question(user_id):
         for ans in answers[question]:
             keyboard.add(types.InlineKeyboardButton(text=ans, callback_data=ans))
 
-        formatted_question = f'<b>{question}</b>'  # Додайте тег <b> для жирного шрифту
+        formatted_question = f'{question_index + 1}/15. <b>{question}</b>'  # Додайте тег <b> для жирного шрифту
         bot.send_message(user_id, formatted_question, reply_markup=keyboard, parse_mode='HTML')
     else:
         send_result_message(user_id, user_info['score'])

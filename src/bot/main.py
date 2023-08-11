@@ -11,6 +11,7 @@ TOKEN = os.getenv("TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
 user_data = {}  # Store current question and score for each user
+chat_data = {}
 
 admins_ID = os.getenv("admins_ID")
 admins_ID = [int(id) for id in admins_ID.split(',')]
@@ -26,11 +27,20 @@ def start(message):
 
 
     bot.send_message(message.chat.id, 'Привіт, я бот-вікторина Локатира романа.', reply_markup=markup)
-    with open('results.txt', 'a') as file:
-        file.write(f" @{message.chat.username} ID: {message.chat.id}\n" 
-                   f"first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
-                   f"Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
-
+    for IDs in admins_ID:
+        if message.chat.type =='private':
+            bot.send_message(IDs, f" @{message.chat.username} ID: {message.chat.id}\n" 
+                   f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
+                   f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
+            with open('results.txt', 'a') as file:
+                file.write(f" @{message.chat.username}, ID: {message.chat.id}\n" 
+                   f" First name: {message.chat.first_name}, Last name: {message.chat.last_name}\n"
+                   f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
+        else:
+            bot.send_message(IDs, f" Typte: {message.chat.type}, Tag: @{message.chat.username}\n"
+                                  f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
+                                  f" Participants: {bot.get_chat_members_count(message.chat.id)}\n"
+                                  f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
 
 
 
@@ -39,19 +49,34 @@ def start(message):
 @bot.message_handler(commands=['quiz'])
 def start(message):
     bot.send_message(message.chat.id, 'Квіз розпочато.')
-    user_data[message.chat.id] = {'question_index': 0, 'score': 0, 'username': message.from_user.username}  # Set the username here
+    user_data[message.chat.id] = {'question_index': 0, 'score': 0, 'username': message.from_user.username}  #
     send_question(message.chat.id)
-    with open('results.txt', 'a') as file:
-        file.write(f" @{message.chat.username} ID: {message.chat.id}\n" 
+    for IDs in admins_ID:
+        if message.chat.type == 'private':
+            bot.send_message(IDs, f" @{message.chat.username} ID: {message.chat.id}\n" 
                    f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
                    f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
-
+            with open('results.txt', 'a') as file:
+                file.write(f" @{message.chat.username} ID: {message.chat.id}\n" 
+                   f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
+                   f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
+        else:
+            bot.send_message(IDs, f" Typte: {message.chat.type}, Tag: @{message.chat.username}\n"
+                                  f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
+                                  f" Participants: {bot.get_chat_members_count(message.chat.id)}"
+                                  f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
+            with open('results.txt', 'a') as file:
+                file.write(f" Typte: {message.chat.type}, Tag: @{message.chat.username}\n"
+                                  f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
+                                  f" Participants: {bot.get_chat_members_count(message.chat.id)}\n"
+                                  f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
 @bot.message_handler(commands=['stats'])
 def stats(message):
         if message.from_user.id in admins_ID:
-            bot.send_document(message.chat.id, open('results.txt', 'rb'))
-        else:
-            bot.send_message(message.chat.id, f"Недостатньо прав")
+            if message.chat.type == 'private':
+                bot.send_document(message.chat.id, open('results.txt', 'rb'))
+            else:
+                bot.send_message(message.chat.id, f"Недостатньо прав")
 
 
 def send_question(user_id):
@@ -72,7 +97,7 @@ def send_question(user_id):
 
 def send_result_message(user_id, score):
     user_info = user_data.get(user_id, {})
-    print("User Info:", user_info)  # Print user info for debugging
+    print("User Info:", user_info)
     username = user_info.get('username', 'Unknown')
     first_name = user_info.get('first_name', 'Unknown')
     last_name = user_info.get('last_name', 'Unknown')
@@ -101,6 +126,10 @@ def send_result_message(user_id, score):
     bot.send_message(user_id, f'Ваш рахунок: {score}')
     result_text = f"{result_message}\n https://t.me/lokatir_bot"
     bot.send_message(user_id, result_text)
+    for IDs in admins_ID:
+        bot.send_message(IDs, f" @{username} ID: {user_id}\n"
+                   f" first name : {first_name} last name: {last_name}\n"
+                   f" finished quiz, with score: {score} at {datetime.now() + timedelta(hours=2)}\n\n\n")
     with open('results.txt', 'a') as file:
         file.write(f" @{username} ID: {user_id}\n"
                    f" first name : {first_name} last name: {last_name}\n"

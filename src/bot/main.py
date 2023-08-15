@@ -20,6 +20,9 @@ chat_data = {}
 admins_ID = os.getenv("admins_ID")
 admins_ID = [int(id) for id in admins_ID.split(',')]
 
+chupa_id = os.getenv("chupa")
+chupa_id = int(chupa_id)
+
 group_id = os.getenv('group_id')
 
 
@@ -168,7 +171,7 @@ async def creators(message: types.Message):
 @dp.message_handler()
 async def chupa(message: types.Message):
     photo_files = [file for file in os.listdir(photos_directory) if file.endswith('.jpg')]
-    if message.from_user.id == 526000056:
+    if message.from_user.id == chupa_id:
         random_photo = random.choice(photo_files)
         with open(os.path.join(photos_directory, random_photo), 'rb') as photo:
             await message.reply_photo(photo)

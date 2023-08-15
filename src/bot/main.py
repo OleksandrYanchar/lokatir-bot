@@ -1,14 +1,18 @@
-import telebot
 import os
+import random
 from dotenv import load_dotenv
-from telebot import types
-from settings import questions, answers
-from telebot import types
 from datetime import datetime, timedelta
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
+from settings import questions,answers
+
+photos_directory = "../lokatir/"
 
 load_dotenv()
+
 TOKEN = os.getenv("TOKEN")
-bot = telebot.TeleBot(TOKEN)
+bot = Bot(token=TOKEN)
+dp = Dispatcher(bot=bot)
 
 user_data = {}  # Store current question and score for each user
 chat_data = {}
@@ -16,74 +20,68 @@ chat_data = {}
 admins_ID = os.getenv("admins_ID")
 admins_ID = [int(id) for id in admins_ID.split(',')]
 
-
-@bot.message_handler(commands=['start'])
-def start(message):
-    markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-    start_button = types.KeyboardButton('/quiz')
-    creators_button = types.KeyboardButton('/creators')
-    stats_button = types.KeyboardButton('/stats')
-    markup.add(start_button, creators_button, stats_button)
+group_id = os.getenv('group_id')
 
 
-    bot.send_message(message.chat.id, 'Привіт, я бот-вікторина Локатира романа.', reply_markup=markup)
-    for IDs in admins_ID:
-        if message.chat.type =='private':
-            bot.send_message(IDs, f" @{message.chat.username} ID: {message.chat.id}\n" 
-                   f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
-                   f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
+start_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+start_markup.add('/quiz', '/creators', '/stats')
+
+@dp.message_handler(commands=['start'])
+async def cmd_start(message: types.Message):
+    await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=start_markup)
+    if message.chat.type == 'private':
+            await bot.send_message(group_id, f" @{message.chat.username} ID: {message.chat.id}\n"
+                                             f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
+                                             f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
             with open('results.txt', 'a') as file:
-                file.write(f" @{message.chat.username}, ID: {message.chat.id}\n" 
-                   f" First name: {message.chat.first_name}, Last name: {message.chat.last_name}\n"
-                   f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
-        else:
-            bot.send_message(IDs, f" Typte: {message.chat.type}, Tag: @{message.chat.username}\n"
-                                  f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
-                                  f" Participants: {bot.get_chat_members_count(message.chat.id)}\n"
-                                  f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
+                file.write(f" @{message.chat.username}, ID: {message.chat.id}\n"
+                           f" First name: {message.chat.first_name}, Last name: {message.chat.last_name}\n"
+                           f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
+    else:
+            await bot.send_message(group_id, f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
+                                             f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
+                                             f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
+                                             f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
 
-
-
-
-
-@bot.message_handler(commands=['quiz'])
-def start_quiz(message):
-    bot.send_message(message.chat.id, 'Квіз розпочато.')
+@dp.message_handler(commands=['quiz'])
+async def start_quiz(message: types.Message):
+    await message.answer('Квіз розпочато.')
     user_data[message.chat.id] = {'question_index': 0, 'score': 0, 'username': message.from_user.username}
     chat_data[message.chat.id] = {'question_index': 0, 'score': 0, 'chat_title': message.chat.title,
                                   'chat_tag': message.chat.username,
-                                  'chat_partisipants': bot.get_chat_members_count(message.chat.id),
-                                  'chat_id': message.chat.id,}
-    send_question(message.chat.id)
-    for IDs in admins_ID:
-        if message.chat.type == 'private':
-            bot.send_message(IDs, f" @{message.chat.username} ID: {message.chat.id}\n" 
-                   f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
-                   f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
+                                  'chat_partisipants': await bot.get_chat_members_count(message.chat.id),
+                                  'chat_id': message.chat.id}
+    await send_question(message.chat.id)
+    if message.chat.type == 'private':
+            await bot.send_message(group_id, f" @{message.chat.username} ID: {message.chat.id}\n"
+                                             f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
+                                             f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
             with open('results.txt', 'a') as file:
-                file.write(f" @{message.chat.username} ID: {message.chat.id}\n" 
-                   f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
-                   f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
-        else:
-            bot.send_message(IDs, f" Typte: {message.chat.type}, Tag: @{message.chat.username}\n"
-                                  f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
-                                  f" Participants: {bot.get_chat_members_count(message.chat.id)}"
-                                  f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
+                file.write(f" @{message.chat.username} ID: {message.chat.id}\n"
+                           f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
+                           f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
+    else:
+            await bot.send_message(group_id, f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
+                                             f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
+                                             f" Participants: {await bot.get_chat_members_count(message.chat.id)}"
+                                             f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
             with open('results.txt', 'a') as file:
-                file.write(f" Typte: {message.chat.type}, Tag: @{message.chat.username}\n"
-                                  f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
-                                  f" Participants: {bot.get_chat_members_count(message.chat.id)}\n"
-                                  f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
-@bot.message_handler(commands=['stats'])
-def stats(message):
+                file.write(f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
+                           f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
+                           f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
+                           f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
+
+@dp.message_handler(commands=['stats'])
+async def stats(message: types.Message):
+    if message.chat.type == 'private':
         if message.from_user.id in admins_ID:
-            if message.chat.type == 'private':
-                bot.send_document(message.chat.id, open('results.txt', 'rb'))
-            else:
-                bot.send_message(message.chat.id, f"Недостатньо прав")
+            await bot.send_document(message.chat.id, open('results.txt', 'rb'))
+    elif  message.chat.id == group_id:
+        await bot.send_document(message.chat.id, open('results.txt', 'rb'))
+    else:
+        await bot.send_message(message.chat.id, "Недостатньо прав")
 
-
-def send_question(user_id):
+async def send_question(user_id):
     user_info = user_data.get(user_id, {'question_index': 0, 'score': 0})
     question_index = user_info['question_index']
 
@@ -93,55 +91,54 @@ def send_question(user_id):
         for ans in answers[question]:
             keyboard.add(types.InlineKeyboardButton(text=ans, callback_data=ans))
 
-        formatted_question = f'{question_index + 1}/16. <b>{question}</b>'  # Додайте тег <b> для жирного шрифту
-        bot.send_message(user_id, formatted_question, reply_markup=keyboard, parse_mode='HTML')
+        formatted_question = f'{question_index + 1}/16. <b>{question}</b>'
+        await bot.send_message(user_id, formatted_question, reply_markup=keyboard, parse_mode='HTML')
     else:
-        send_result_message(user_id, user_info['score'])
+        await send_result_message(user_id, user_info['score'])
 
 
-def send_result_message(user_id, score):
+async def send_result_message(user_id, score):
     user_info = user_data.get(user_id, {})
-    print("User Info:", user_info)
     username = user_info.get('username', 'Unknown')
     first_name = user_info.get('first_name', 'Unknown')
     last_name = user_info.get('last_name', 'Unknown')
+
     if -1000 < score <= 0:
         result_message = 'Ви взагалі не знаєте Романа, ідіть підівчіться та не позортесь'
-        bot.send_photo(user_id, photo=open('../pictures/pidyob.png' ,'rb'))
+        await bot.send_photo(user_id, photo=open('../pictures/pidyob.png', 'rb'))
     elif 0 < score <= 10:
         result_message = 'Дуже слабенько, ви напевно лише вчора дізналися хто такий Роман'
-        bot.send_photo(user_id, photo=open('../pictures/ok.png', 'rb'))
+        await bot.send_photo(user_id, photo=open('../pictures/ok.png', 'rb'))
     elif 10 < score <= 35:
         result_message = 'Ви знаєте Романа не перший день, але все одно цього недостатньо'
-        bot.send_photo(user_id, photo=open('../pictures/patriot.png', 'rb'))
+        await bot.send_photo(user_id, photo=open('../pictures/patriot.png', 'rb'))
     elif 30 < score <= 72:
         result_message = 'Непогано, ще трішки і ви зможете сказати, що ви фанат Романа'
-        bot.send_photo(user_id, photo=open('../pictures/dovolniy.png', 'rb'))
+        await bot.send_photo(user_id, photo=open('../pictures/dovolniy.png', 'rb'))
     elif 70 < score <= 130:
         result_message = 'Ви справжній фанат Романа'
-        bot.send_photo(user_id, photo=open('../pictures/cool_1.png', 'rb'))
+        await bot.send_photo(user_id, photo=open('../pictures/cool_1.png', 'rb'))
     elif 130 < score <= 142:
         result_message = 'Ви Локатир Романа, або його кращий друг'
-        bot.send_photo(user_id, photo=open('../pictures/bratva.png', 'rb'))
+        await bot.send_photo(user_id, photo=open('../pictures/bratva.png', 'rb'))
     else:
         result_message = 'Сама ти нахуй нікому не потрібна, шмара'
-        bot.send_photo(user_id, photo=open('../pictures/minus.jpg', 'rb'))
-
-    bot.send_message(user_id, f'Ваш рахунок: {score}')
+        await bot.send_photo(user_id, photo=open('../pictures/minus.jpg', 'rb'))
     result_text = f"{result_message}\n https://t.me/lokatir_bot"
-    bot.send_message(user_id, result_text)
-    for IDs in admins_ID:
-        bot.send_message(IDs, f" @{username} ID: {user_id}\n"
-                   f" first name : {first_name} last name: {last_name}\n"
-                   f" finished quiz, with score: {score} at {datetime.now() + timedelta(hours=2)}\n\n\n")
+
+    await bot.send_message(user_id, f'Ваш рахунок: {score}')
+    await bot.send_message(user_id, result_text)
+    await bot.send_message(group_id, f" @{username} ID: {user_id}\n"
+                                         f" first name : {first_name} last name: {last_name}\n"
+                                         f" finished quiz, with score: {score} at {datetime.now() + timedelta(hours=2)}\n\n\n")
     with open('results.txt', 'a') as file:
         file.write(f" @{username} ID: {user_id}\n"
                    f" first name : {first_name} last name: {last_name}\n"
                    f" finished quiz, with score: {score} at {datetime.now() + timedelta(hours=2)}\n\n\n")
 
+@dp.callback_query_handler(lambda call: True)
+async def answer(call: types.CallbackQuery):
 
-@bot.callback_query_handler(func=lambda call: True)
-def answer(call):
     answer = call.data
     user_id = call.message.chat.id
     user_info = user_data.get(user_id, {'question_index': 0, 'score': 0})
@@ -151,10 +148,10 @@ def answer(call):
     if answer in answers[question]:
         user_info['score'] += answers[question][answer]
         user_info['question_index'] += 1
-        send_question(user_id)
+        await send_question(user_id)
 
-@bot.message_handler(commands=['creators'])
-def creators(message):
+@dp.message_handler(commands=['creators'])
+async def creators(message: types.Message):
     markup = types.InlineKeyboardMarkup(row_width=1)
     creator_links = [
         types.InlineKeyboardButton("OleksandrYanchar GitHub", url="https://github.com/OleksandrYanchar"),
@@ -165,8 +162,18 @@ def creators(message):
         types.InlineKeyboardButton("fortnite_dota Twitch", url="https://www.twitch.tv/fortnite_dota")
     ]
 
-    markup.add(*creator_links)  # Додаємо кнопки у розмітку
+    markup.add(*creator_links)
+    await bot.send_message(message.chat.id, "Посилання на авторів бота:", reply_markup=markup)
 
-    bot.send_message(message.chat.id, "Посилання на авторів бота:", reply_markup=markup)
+@dp.message_handler()
+async def chupa(message: types.Message):
+    photo_files = [file for file in os.listdir(photos_directory) if file.endswith('.jpg')]
+    if message.from_user.id == 526000056:
+        random_photo = random.choice(photo_files)
+        with open(os.path.join(photos_directory, random_photo), 'rb') as photo:
+            await message.reply_photo(photo)
 
-bot.polling()
+
+if __name__ == '__main__':
+    from aiogram import executor
+    executor.start_polling(dp)

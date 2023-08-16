@@ -34,7 +34,8 @@ start_markup.add('/quiz', '/creators', '/stats').add('/HowRomanAreYou')
 async def cmd_start(message: types.Message):
     await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=start_markup)
     if message.chat.type == 'private':
-            await bot.send_message(group_id, f" @{message.chat.username} ID: {message.chat.id}\n"
+        for IDs in admins_ID:
+            await bot.send_message(IDs, f" @{message.chat.username} ID: {message.chat.id}\n"
                                              f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
                                              f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
             with open('results.txt', 'a') as file:
@@ -61,7 +62,8 @@ async def start_quiz(message: types.Message):
                                   'chat_id': message.chat.id}
     await send_question(message.chat.id)
     if message.chat.type == 'private':
-            await bot.send_message(group_id, f" @{message.chat.username} ID: {message.chat.id}\n"
+        for IDs in admins_ID:
+            await bot.send_message(IDs, f" @{message.chat.username} ID: {message.chat.id}\n"
                                              f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
                                              f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
             with open('results.txt', 'a') as file:
@@ -69,7 +71,8 @@ async def start_quiz(message: types.Message):
                            f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
                            f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
     else:
-            await bot.send_message(group_id, f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
+        for IDs in admins_ID:
+            await bot.send_message(IDs, f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
                                              f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
                                              f" Participants: {await bot.get_chat_members_count(message.chat.id)}"
                                              f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
@@ -138,7 +141,8 @@ async def send_result_message(user_id, score):
 
     await bot.send_message(user_id, f'Ваш рахунок: {score}')
     await bot.send_message(user_id, result_text)
-    await bot.send_message(group_id, f" @{username} ID: {user_id}\n"
+    for IDs in admins_ID:
+        await bot.send_message(IDs, f" @{username} ID: {user_id}\n"
                                          f" first name : {first_name} last name: {last_name}\n"
                                          f" finished quiz, with score: {score} at {datetime.now() + timedelta(hours=2)}\n\n\n")
     with open('results.txt', 'a') as file:

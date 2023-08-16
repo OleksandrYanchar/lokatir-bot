@@ -25,11 +25,11 @@ chupa_id = int(chupa_id)
 
 group_id = os.getenv('group_id')
 
+start_time = datetime.now() + timedelta(hours=2)
 
 start_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-start_markup.add('/quiz', '/creators', '/stats')
+start_markup.add('/quiz', '/creators', '/stats').add('/HowRomanAreYou')
 
-start_time = datetime.now() + timedelta(hours=2)
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: types.Message):
     await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=start_markup)
@@ -46,6 +46,10 @@ async def cmd_start(message: types.Message):
                                              f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
                                              f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
                                              f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
+
+@dp.message_handler(commands=['HowRomanAreYou'])
+async def how_roman_are_you(message: types.Message):
+        await message.reply(f'ви на {random.randint(0,100)}% Роман Локатир')
 
 @dp.message_handler(commands=['quiz'])
 async def start_quiz(message: types.Message):

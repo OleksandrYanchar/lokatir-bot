@@ -29,6 +29,7 @@ group_id = os.getenv('group_id')
 start_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 start_markup.add('/quiz', '/creators', '/stats')
 
+start_time = datetime.now() + timedelta(hours=2)
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: types.Message):
     await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=start_markup)
@@ -78,8 +79,10 @@ async def start_quiz(message: types.Message):
 async def stats(message: types.Message):
     if message.chat.type == 'private':
         if message.from_user.id in admins_ID:
+            await bot.send_message(message.chat.id, f'версія бота від {start_time} ')
             await bot.send_document(message.chat.id, open('results.txt', 'rb'))
     elif  message.chat.id == group_id:
+        await bot.send_message(message.chat.id, f'версія бота від {start_time} ')
         await bot.send_document(message.chat.id, open('results.txt', 'rb'))
     else:
         await bot.send_message(message.chat.id, "Недостатньо прав")
@@ -121,7 +124,7 @@ async def send_result_message(user_id, score):
     elif 70 < score <= 130:
         result_message = 'Ви справжній фанат Романа'
         await bot.send_photo(user_id, photo=open('../pictures/cool_1.png', 'rb'))
-    elif 130 < score <= 142:
+    elif 130 < score:
         result_message = 'Ви Локатир Романа, або його кращий друг'
         await bot.send_photo(user_id, photo=open('../pictures/bratva.png', 'rb'))
     else:

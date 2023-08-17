@@ -22,6 +22,7 @@ admins_ID = [int(id) for id in admins_ID.split(',')]
 
 chupa_id = os.getenv("chupa")
 chupa_id = int(chupa_id)
+chupa_ID = chupa_id
 
 group_id = os.getenv('group_id')
 
@@ -31,8 +32,14 @@ start_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 start_markup.add('/quiz', '/creators', '/stats').add('/HowRomanAreYou')
 
 @dp.message_handler(commands=['start'])
+@dp.message_handler(commands=['start'])
 async def cmd_start(message: types.Message):
-    await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=start_markup)
+    user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    user_markup.add('/quiz', '/creators', '/stats').add('/HowRomanAreYou')
+    if message.from_user.id in admins_ID:
+        user_markup.add('/restartTracking', '/stopTracking')
+
+    await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=user_markup)
     if message.chat.type == 'private':
         for IDs in admins_ID:
             await bot.send_message(IDs  , f" @{message.chat.username} ID: {message.chat.id}\n"
@@ -63,6 +70,10 @@ async def how_roman_are_you(message: types.Message):
                                              f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
                                              f" is {procent}% roman {datetime.now() + timedelta(hours=2)}\n\n\n")
 
+
+    keyboard = types.InlineKeyboardMarkup()
+    keyboard.add(types.InlineKeyboardButton(text='stop tracking', callback_data=stop))
+    keyboard.add(types.InlineKeyboardButton(text='restart tracking', callback_data=restart))
 @dp.message_handler(commands=['quiz'])
 async def start_quiz(message: types.Message):
     await message.answer('Квіз розпочато.')
@@ -189,6 +200,22 @@ async def creators(message: types.Message):
 
     markup.add(*creator_links)
     await bot.send_message(message.chat.id, "Посилання на авторів бота:", reply_markup=markup)
+
+
+@dp.message_handler(commands=['restartTracking'])
+async def switch(message: types.Message):
+    global chupa_id
+    if message.from_user.id in admins_ID:
+        chupa_id = chupa_ID
+        await bot.send_message(message.chat.id, 'tracking started')
+
+@dp.message_handler(commands=['stopTracking'])
+async def switch(message: types.Message):
+    global chupa_id
+    if message.from_user.id in admins_ID:
+        chupa_id +=1
+        await bot.send_message(message.chat.id,   'tracking stopped')
+
 
 @dp.message_handler()
 async def chupa(message: types.Message):

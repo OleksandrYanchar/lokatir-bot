@@ -35,7 +35,7 @@ async def cmd_start(message: types.Message):
     await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=start_markup)
     if message.chat.type == 'private':
         for IDs in admins_ID:
-            await bot.send_message(IDs, f" @{message.chat.username} ID: {message.chat.id}\n"
+            await bot.send_message(IDs  , f" @{message.chat.username} ID: {message.chat.id}\n"
                                              f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
                                              f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
             with open('results.txt', 'a') as file:
@@ -50,7 +50,18 @@ async def cmd_start(message: types.Message):
 
 @dp.message_handler(commands=['HowRomanAreYou'])
 async def how_roman_are_you(message: types.Message):
-        await message.reply(f'ви на {random.randint(0,100)}% Роман Локатир')
+    procent = random.randint(0,100)
+    await message.reply(f'ви на {procent}% Роман Локатир')
+    for IDs in admins_ID:
+        if message.chat.type =="private":
+            await bot.send_message(IDs, f" @{message.chat.username} ID: {message.chat.id}\n"
+                                    f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
+                                    f" is {procent}% roman {datetime.now() + timedelta(hours=2)}\n\n\n")
+        else:
+            await bot.send_message(IDs, f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
+                                             f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
+                                             f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
+                                             f" is {procent}% roman {datetime.now() + timedelta(hours=2)}\n\n\n")
 
 @dp.message_handler(commands=['quiz'])
 async def start_quiz(message: types.Message):

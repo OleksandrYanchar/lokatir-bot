@@ -1,5 +1,6 @@
 import os
 import random
+import re
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from aiogram import Bot, Dispatcher, types
@@ -37,7 +38,7 @@ async def cmd_start(message: types.Message):
     user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     user_markup.add('/quiz', '/creators', '/stats').add('/HowRomanAreYou')
     if message.from_user.id in admins_ID:
-        user_markup.add('/restartTracking', '/stopTracking')
+        user_markup.add('/restartTracking', '/stopTracking', '/changeTrackID')
 
     await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=user_markup)
     if message.chat.type == 'private':
@@ -54,6 +55,13 @@ async def cmd_start(message: types.Message):
                                              f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
                                              f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
                                              f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
+
+
+
+@dp.message_handler(commands=['top'])
+async def top(message: types.Message):
+    message.reply(f'найбільший результат зараз')
+
 
 @dp.message_handler(commands=['HowRomanAreYou'])
 async def how_roman_are_you(message: types.Message):
@@ -132,7 +140,7 @@ async def send_question(user_id):
         await send_result_message(user_id, user_info['score'])
 
 
-async def send_result_message(user_id, score):
+async def send_result_message(top_score, user_id, score):
     user_info = user_data.get(user_id, {})
     username = user_info.get('username', 'Unknown')
     first_name = user_info.get('first_name', 'Unknown')
@@ -185,7 +193,6 @@ async def answer(call: types.CallbackQuery):
         user_info['score'] += answers[question][answer]
         user_info['question_index'] += 1
         await send_question(user_id)
-
 @dp.message_handler(commands=['creators'])
 async def creators(message: types.Message):
     markup = types.InlineKeyboardMarkup(row_width=1)
@@ -215,6 +222,18 @@ async def switch(message: types.Message):
     if message.from_user.id in admins_ID:
         chupa_id +=1
         await bot.send_message(message.chat.id,   'tracking stopped')
+
+
+@dp.message_handler(commands=['changeTrackID'])
+async def cmd_change_track_id(message: types.Message):
+    global chupa_id
+    command_parts = message.text.split()
+    if len(command_parts) > 1:
+        new_chupa_id = int(command_parts[-1])
+        chupa_id = new_chupa_id
+        await message.reply(f"Ви змінили ID для відстеження повідомлень на {chupa_id}")
+    else:
+        await message.reply("Введіть команду у форматі /changeTrackID ID")
 
 
 @dp.message_handler()

@@ -23,10 +23,7 @@ sudo systemctl restart bot.service
 
 ---
 
-## Ii you haven't set up CI-CD or don't want to manually do a git pull:
-
-
- Make file executable:
+ #### Make file executable:
  ### (make changes!!!)
 ```bash
 chmod +x auto_pull.sh

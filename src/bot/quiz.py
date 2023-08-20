@@ -3,6 +3,9 @@ from aiogram import Bot, Dispatcher, types
 from datetime import datetime, timedelta
 from settings import chat_data, user_data, bot, dp, bot, admins_ID
 from questions import  questions, answers
+from quiz_database import QuizDatabase
+
+db = QuizDatabase()
 
 @dp.message_handler(commands=['quiz'])
 async def start_quiz(message: types.Message):
@@ -60,6 +63,7 @@ async def send_result_message( user_id, score):
     username = user_info.get('username', 'Unknown')
     first_name = user_info.get('first_name', 'Unknown')
     last_name = user_info.get('last_name', 'Unknown')
+    db.save_quiz_result(user_id, username, score)
 
     # def result messages depended on users score
     if -1000 < score <= 0:
@@ -116,3 +120,13 @@ async def answer(call: types.CallbackQuery):
         # Send the next question to the user
         await send_question(user_id)
 
+
+
+@dp.message_handler(commands=['top'])
+async def get_top(message: types.Message):
+    top_result = db.get_top_result()
+    if top_result:
+        username, score = top_result
+        await message.answer(f"Найкращий результат : User: <b>{username.capitalize()}</b>: <b>{score}</b> очків", parse_mode='HTML')
+    else:
+        await message.answer("Жодного результату зараз немає")

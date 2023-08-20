@@ -5,15 +5,28 @@ from settings import bot, dp, chupa_id, chupa_ID, admins_ID,photos_directory
 from users_database import  UsersDatabase
 
 
+
 db_manager = UsersDatabase()
 
+@dp.message_handler(commands=['admin'])
+async def admin_menu(message: types.Message):
+    if message.from_user.id in admins_ID:
+        user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        user_markup.add('/restartTracking', '/stopTracking', '/changeTrackID').add('/users','/sendAlert').add('/back')
+        await message.reply("Адмін меню", reply_markup=user_markup)
+@dp.message_handler(commands=['back'])
+async def default_menu(message: types.Message):
+    if message.from_user.id in admins_ID:
+        user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        user_markup.add('/quiz', '/creators', '/stats').add('/HowRomanAreYou', '/top')
+        await message.reply("Звичайне меню", reply_markup=user_markup)
 @dp.message_handler(commands=['users'])
 async def get_ids(message: types.Message):
     users = []
     db_entries = db_manager.get_all_entries()
     for entry in db_entries:
         users.append(entry[0])
-    await bot.send_message(526000056, f"{users} ")
+    await bot.send_message(message.chat.id, f"{users} ")
 
 
 @dp.message_handler(commands=['sendAlert'])

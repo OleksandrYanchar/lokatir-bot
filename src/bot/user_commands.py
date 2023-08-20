@@ -18,7 +18,7 @@ async def cmd_start(message: types.Message):
     user_markup.add('/quiz', '/creators', '/stats').add('/HowRomanAreYou','/top')
     # makes commands board for admins
     if message.from_user.id in admins_ID:
-        user_markup.add('/restartTracking', '/stopTracking', '/changeTrackID').add('/users','/sendAlert')
+        user_markup.add('/admin')
 
     await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=user_markup)
     if message.chat.type == 'private':

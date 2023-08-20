@@ -19,6 +19,8 @@ async def default_menu(message: types.Message):
     if message.from_user.id in admins_ID:
         user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         user_markup.add('/quiz', '/creators', '/stats').add('/HowRomanAreYou', '/top')
+        if message.from_user.id in admins_ID:
+            user_markup.add('/admin')
         await message.reply("Звичайне меню", reply_markup=user_markup)
 @dp.message_handler(commands=['users'])
 async def get_ids(message: types.Message):

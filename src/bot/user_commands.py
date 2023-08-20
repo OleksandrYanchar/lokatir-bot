@@ -1,8 +1,46 @@
 from aiogram import Bot, Dispatcher, types
 from datetime import datetime, timedelta
 from settings import dp,bot, start_time, admins_ID
+from users_database import UsersDatabase
 import os
 import random
+
+db_manager = UsersDatabase()
+@dp.message_handler(commands=['start'])
+#handle the '/start' command
+
+async def cmd_start(message: types.Message):
+    user_id = message.chat.id
+    if not db_manager.user_exists(user_id):
+        db_manager.add_user(user_id)
+    #makes commands board for users
+    user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    user_markup.add('/quiz', '/creators', '/stats').add('/HowRomanAreYou','/top')
+    # makes commands board for admins
+    if message.from_user.id in admins_ID:
+        user_markup.add('/restartTracking', '/stopTracking', '/changeTrackID').add('/users','/sendAlert')
+
+    await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=user_markup)
+    if message.chat.type == 'private':
+        #send loggs to admins in dm and append logging txt file
+        for IDs in admins_ID:
+            await bot.send_message(IDs  , f" @{message.chat.username} ID: {message.chat.id}\n"
+                                          f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
+                                          f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
+            with open('results.txt', 'a') as file:
+                file.write(f" @{message.chat.username}, ID: {message.chat.id}\n"
+                           f" First name: {message.chat.first_name}, Last name: {message.chat.last_name}\n"
+                           f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
+    else:
+        for IDs in admins_ID:
+            await bot.send_message(IDs, f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
+                                        f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
+                                        f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
+                                        f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
+
+
+
+
 @dp.message_handler(commands=['creators'])
 # Handle 'creators' command to send links for creators
 async def creators(message: types.Message):

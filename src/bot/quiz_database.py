@@ -1,8 +1,10 @@
+import os
 import sqlite3
 
 class QuizDatabase:
     def __init__(self, db_name='quiz_database.db'):
-        self.conn = sqlite3.connect(db_name)
+        db_path = os.path.join(os.path.dirname(__file__), '../databases', db_name)
+        self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS quiz_results (

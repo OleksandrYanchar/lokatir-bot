@@ -2,6 +2,32 @@ import os
 import random
 from aiogram import Bot, Dispatcher, types
 from settings import bot, dp, chupa_id, chupa_ID, admins_ID,photos_directory
+from users_database import  UsersDatabase
+
+
+db_manager = UsersDatabase()
+
+@dp.message_handler(commands=['users'])
+async def get_ids(message: types.Message):
+    users = []
+    db_entries = db_manager.get_all_entries()
+    for entry in db_entries:
+        users.append(entry[0])
+    await bot.send_message(526000056, f"{users} ")
+
+
+@dp.message_handler(commands=['sendAlert'])
+async def send_message(message: types.Message):
+    if message.from_user.id in admins_ID:
+        if len(message.text.split())> 1:
+            alert_text = message.text.replace('/sendAlert', '').strip()
+            db_entries = db_manager.get_all_entries()
+            for entry in db_entries:
+                user_id = entry[0]
+                await bot.send_message(user_id, alert_text)
+        else:
+            await  message.reply('введи текст')
+
 @dp.message_handler(commands=['restartTracking'])
 # Handle 'restartTracking' command to restart tracking
 async def start_tracking(message: types.Message):

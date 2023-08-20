@@ -12,13 +12,13 @@ db_manager = UsersDatabase()
 async def admin_menu(message: types.Message):
     if message.from_user.id in admins_ID:
         user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        user_markup.add('/restartTracking', '/stopTracking', '/changeTrackID').add('/users','/sendAlert').add('/back')
+        user_markup.add('/restartTracking', '/stopTracking', '/changeTrackID').add('/users','/sendAlert','/stats').add('/back')
         await message.reply("Адмін меню", reply_markup=user_markup)
 @dp.message_handler(commands=['back'])
 async def default_menu(message: types.Message):
     if message.from_user.id in admins_ID:
         user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        user_markup.add('/quiz', '/creators', '/stats').add('/HowRomanAreYou', '/top')
+        user_markup.add('/quiz', '/creators').add('/HowRomanAreYou', '/top')
         if message.from_user.id in admins_ID:
             user_markup.add('/admin')
         await message.reply("Звичайне меню", reply_markup=user_markup)

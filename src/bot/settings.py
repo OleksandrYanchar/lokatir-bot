@@ -23,6 +23,8 @@ user_data = {}
 #dictionary to store chat-specific data
 chat_data = {}
 
+questions= {}
+
 #IDs of bot administrators from environment .env file
 admins_ID = os.getenv("admins_ID")
 admins_ID = [int(id) for id in admins_ID.split(',')]

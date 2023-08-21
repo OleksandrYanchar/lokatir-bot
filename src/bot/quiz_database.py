@@ -16,9 +16,19 @@ class QuizDatabase:
         self.conn.commit()
 
     def save_quiz_result(self, user_id, username, score):
-        self.cursor.execute('INSERT INTO quiz_results (user_id, username, score) VALUES (?, ?, ?)',
+        self.cursor.execute('SELECT score FROM quiz_results WHERE user_id = ?', (user_id,))
+        existing_score = self.cursor.fetchone()
+        if existing_score:
+            if score > existing_score[0]:
+                self.cursor.execute('UPDATE quiz_results SET username = ?, score = ? WHERE user_id = ?',
+                                (username, score, user_id))
+        else:
+            self.cursor.execute('INSERT INTO quiz_results (user_id, username, score) VALUES (?, ?, ?)',
                             (user_id, username, score))
+
         self.conn.commit()
+
+
 
     def get_top_result(self):
         self.cursor.execute('SELECT username, score FROM quiz_results ORDER BY score DESC LIMIT 1')

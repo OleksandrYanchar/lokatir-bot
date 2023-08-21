@@ -49,7 +49,8 @@ async def start_tracking(message: types.Message):
     global chupa_id
     if message.from_user.id in admins_ID:
         chupa_id = chupa_ID
-        await bot.send_message(message.chat.id, 'tracking started')
+        for IDs in admins_ID:
+            await bot.send_message(IDs, 'tracking started')
 
 @dp.message_handler(commands=['stopTracking'])
 # Handle 'stopTracking' command to stop Tracking
@@ -58,7 +59,8 @@ async def stop_tracking(message: types.Message):
     global chupa_id
     if message.from_user.id in admins_ID:
         chupa_id +=1
-        await bot.send_message(message.chat.id,   'tracking stopped')
+        for IDs in admins_ID:
+            await bot.send_message(IDs,   'tracking stopped')
 
 
 @dp.message_handler(commands=['changeTrackID'])

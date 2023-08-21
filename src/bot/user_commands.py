@@ -15,12 +15,13 @@ async def cmd_start(message: types.Message):
         db_manager.add_user(user_id)
     #makes commands board for users
     user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    user_markup.add('/quiz', '/creators',).add('/HowRomanAreYou','/top')
-    # makes commands board for admins
+    user_markup.add('/quiz', '/creators','/ban').add('/HowRomanAreYou','/top')
+    # add board switcher for admins
     if message.from_user.id in admins_ID:
         user_markup.add('/admin')
 
     await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=user_markup)
+    await message.answer_sticker('CAACAgIAAxkBAAEKFiNk4yseSJX8wQLyKT6V6MSR7K6N7AACyTAAAhL-wUt17d_gphvbujAE')
     await bot.send_message(message.chat.id, '<b>Ось список доступних команд</b>:\n'
                                             '/quiz: для початку вікторини\n'
                                             '/top: показує найкращий результат у квізі\n'

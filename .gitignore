@@ -11,7 +11,7 @@
 # Old pictures which used for README
 src/images/readme/old
 
-.db
+*.db
 .idea
 results.txt
 

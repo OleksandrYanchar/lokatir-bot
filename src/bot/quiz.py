@@ -22,7 +22,7 @@ async def start_quiz(message: types.Message):
         db_manager.add_user(message.chat.id)
     await message.answer('Квіз розпочато.')
     #collect user date depended on chat type
-    user_data[message.chat.id] = {'question_index': 0, 'score': 0, 'username': message.from_user.username}
+    user_data[message.chat.id] = {'question_index': 0, 'score': 0, 'username': message.from_user.username   }
     chat_data[message.chat.id] = {'question_index': 0, 'score': 0, 'chat_title': message.chat.title,
                                   'chat_tag': message.chat.username,
                                   'chat_partisipants': await bot.get_chat_members_count(message.chat.id),
@@ -111,10 +111,9 @@ async def send_result_message( user_id, score):
     else:
         result_message = 'Сама ти нахуй нікому не потрібна, шмара'
         await bot.send_photo(user_id, photo=open('../pictures/minus.jpg', 'rb'))
-    result_text = f"{result_message}\n<a href='https://t.me/lokatir_bot'>Перейти до бота</a>"
 
     await bot.send_message(user_id, f'Ваш рахунок: {score}')
-    await bot.send_message(user_id, result_text)
+    await bot.send_message(user_id, f"{result_message}\n<a href='https://t.me/lokatir_bot'>Перейти до бота</a>", parse_mode='HTML')
     for IDs in admins_ID:
         # send loggs to admins in dm if used in private chat
         await bot.send_message(IDs, f" @{username} ID: {user_id}\n"

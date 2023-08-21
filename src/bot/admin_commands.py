@@ -75,7 +75,7 @@ async def change_track_id(message: types.Message):
             chupa_id = new_chupa_id
             await message.reply(f"Ви змінили ID для відстеження повідомлень на {chupa_id}")
             for IDs in admins_ID:
-                await bot.send_message(IDs, f'тепер трекає {chupa_id}')
+                await bot.send_message(IDs, f'тепер ,бот трекає {chupa_id}')
         else:
             await message.reply("Введіть команду у форматі /changeTrackID ID")
 

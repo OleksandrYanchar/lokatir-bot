@@ -97,5 +97,8 @@ async def stats(message: types.Message):
             await bot.send_document(message.chat.id, open('results.txt', 'rb'))
     else:
         await bot.send_message(message.chat.id, "Недостатньо прав")
-
+@dp.message_handler(commands=['ban'])
+async def ban_reply(message: types.Message):
+    with open('../pictures/tate.mp4', 'rb') as tate:
+        await message.reply_animation(animation=tate)
 

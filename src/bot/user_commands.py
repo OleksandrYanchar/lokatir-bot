@@ -5,14 +5,14 @@ from users_database import UsersDatabase
 import os
 import random
 
-db_manager = UsersDatabase()
+users_db = UsersDatabase()
 @dp.message_handler(commands=['start'])
 #handle the '/start' command
 
 async def cmd_start(message: types.Message):
     user_id = message.chat.id
-    if not db_manager.user_exists(user_id):
-        db_manager.add_user(user_id)
+    if not users_db.user_exists(user_id):
+        users_db.add_user(user_id)
     #makes commands board for users
     user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     user_markup.add('/quiz', '/creators','/ban').add('/HowRomanAreYou','/top')

@@ -7,9 +7,8 @@ from questions import original_questions
 from quiz_database import QuizDatabase
 from users_database import UsersDatabase
 
-
-db_manager = UsersDatabase()
-db = QuizDatabase()
+users_db = UsersDatabase()
+quiz_db = QuizDatabase()
 
 
 @dp.message_handler(commands=['quiz'])
@@ -18,8 +17,8 @@ async def start_quiz(message: types.Message):
     keys = list(original_questions.keys())
     random.shuffle(keys)  # Shuffle the keys
     questions = {key: original_questions[key] for key in keys}
-    if not db_manager.user_exists(message.chat.id):
-        db_manager.add_user(message.chat.id)
+    if not users_db.user_exists(message.chat.id):
+        users_db.add_user(message.chat.id)
     await message.answer('Квіз розпочато.')
     #collect user date depended on chat type
     user_data[message.chat.id] = {'question_index': 0, 'score': 0, 'username': message.from_user.username   }
@@ -123,13 +122,13 @@ async def send_result_message( user_id, score):
         file.write(f" @{username} ID: {user_id}\n"
                    f" first name : {first_name} last name: {last_name}\n"
                    f" finished quiz, with score: {score} at {datetime.now() + timedelta(hours=2)}\n\n\n")
-    db.save_quiz_result(user_id, username, score)
+    quiz_db.save_quiz_result(user_id, username, score)
 
 
 
 @dp.message_handler(commands=['top'])
 async def get_top(message: types.Message):
-    top_result = db.get_top_result()
+    top_result = quiz_db.get_top_result()
     if top_result:
         username, score = top_result
         await message.answer(f"Найкращий результат : User: <b>{username.capitalize()}</b>: <b>{score}</b> очків", parse_mode='HTML')

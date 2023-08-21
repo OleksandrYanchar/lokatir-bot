@@ -1,15 +1,25 @@
+import random
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram import Bot, Dispatcher, types
 from datetime import datetime, timedelta
-from settings import chat_data, user_data, bot, dp, bot, admins_ID
-from questions import  questions, answers
+from settings import chat_data, user_data, bot, dp, bot, admins_ID,questions
+from questions import original_questions
 from quiz_database import QuizDatabase
+from users_database import UsersDatabase
 
+
+db_manager = UsersDatabase()
 db = QuizDatabase()
+
 
 @dp.message_handler(commands=['quiz'])
 async def start_quiz(message: types.Message):
-    #handle the '/quiz' command to start the quiz
+    global questions
+    keys = list(original_questions.keys())
+    random.shuffle(keys)  # Shuffle the keys
+    questions = {key: original_questions[key] for key in keys}
+    if not db_manager.user_exists(message.chat.id):
+        db_manager.add_user(message.chat.id)
     await message.answer('Квіз розпочато.')
     #collect user date depended on chat type
     user_data[message.chat.id] = {'question_index': 0, 'score': 0, 'username': message.from_user.username}
@@ -22,8 +32,8 @@ async def start_quiz(message: types.Message):
         for IDs in admins_ID:
             # send loggs to admins in dm if used in private chat  and append loggs file
             await bot.send_message(IDs, f" @{message.chat.username} ID: {message.chat.id}\n"
-                                             f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
-                                             f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
+                                        f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
+                                        f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
             with open('results.txt', 'a') as file:
                 file.write(f" @{message.chat.username} ID: {message.chat.id}\n"
                            f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
@@ -32,30 +42,45 @@ async def start_quiz(message: types.Message):
         # send loggs to admins in dm if used in group chat and append loggs file
         for IDs in admins_ID:
             await bot.send_message(IDs, f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
-                                             f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
-                                             f" Participants: {await bot.get_chat_members_count(message.chat.id)}"
-                                             f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
+                                        f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
+                                        f" Participants: {await bot.get_chat_members_count(message.chat.id)}"
+                                        f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
             with open('results.txt', 'a') as file:
                 file.write(f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
                            f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
                            f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
                            f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
 
+
 async def send_question(user_id):
-    # func which send bext qurstions
+    questions_list = list(questions.keys())
     user_info = user_data.get(user_id, {'question_index': 0, 'score': 0})
     question_index = user_info['question_index']
 
-    if question_index < len(questions):
-        question = questions[question_index]
+    if question_index < len(questions_list):
+        question = questions_list[question_index]
         keyboard = types.InlineKeyboardMarkup()
-        for ans in answers[question]:
+        for ans, score in questions[question].items():
             keyboard.add(types.InlineKeyboardButton(text=ans, callback_data=ans))
 
-        formatted_question = f'{question_index + 1}/{len(questions)}. <b>{question}</b>'
+        formatted_question = f'{question_index + 1}/{len(questions_list)}. <b>{question}</b>'
         await bot.send_message(user_id, formatted_question, reply_markup=keyboard, parse_mode='HTML')
     else:
         await send_result_message(user_id, user_info['score'])
+
+@dp.callback_query_handler(lambda call: True)
+async def answer(call: types.CallbackQuery):
+    answer = call.data
+    user_id = call.message.chat.id
+    user_info = user_data.get(user_id, {'question_index': 0, 'score': 0})
+    question_index = user_info['question_index']
+    question = list(questions.keys())[question_index]
+
+    if answer in questions[question]:
+        user_info['score'] += questions[question][answer]
+        user_info['question_index'] += 1
+        await send_question(user_id)
+
 
 async def send_result_message( user_id, score):
     # func which sends result message after quiz
@@ -63,7 +88,6 @@ async def send_result_message( user_id, score):
     username = user_info.get('username', 'Unknown')
     first_name = user_info.get('first_name', 'Unknown')
     last_name = user_info.get('last_name', 'Unknown')
-    db.save_quiz_result(user_id, username, score)
 
     # def result messages depended on users score
     if -1000 < score <= 0:
@@ -87,7 +111,7 @@ async def send_result_message( user_id, score):
     else:
         result_message = 'Сама ти нахуй нікому не потрібна, шмара'
         await bot.send_photo(user_id, photo=open('../pictures/minus.jpg', 'rb'))
-    result_text = f"{result_message}\n https://t.me/lokatir_bot"
+    result_text = f"{result_message}\n<a href='https://t.me/lokatir_bot'>Перейти до бота</a>"
 
     await bot.send_message(user_id, f'Ваш рахунок: {score}')
     await bot.send_message(user_id, result_text)
@@ -100,25 +124,7 @@ async def send_result_message( user_id, score):
         file.write(f" @{username} ID: {user_id}\n"
                    f" first name : {first_name} last name: {last_name}\n"
                    f" finished quiz, with score: {score} at {datetime.now() + timedelta(hours=2)}\n\n\n")
-@dp.callback_query_handler(lambda call: True)
-async def answer(call: types.CallbackQuery):
-    # Handle callback queries for answers to quiz questions
-    # Get the selected answer from the callback data
-    answer = call.data
-    user_id = call.message.chat.id
-    # Get user-specific information or initialize with default values
-    user_info = user_data.get(user_id, {'question_index': 0, 'score': 0})
-    question_index = user_info['question_index']
-    # Get the question text for the current question index
-    question = questions[question_index]
-    # Check if the selected answer is among the valid answers for the question
-    if answer in answers[question]:
-        # Increment the user's score based on the selected answer's value
-        user_info['score'] += answers[question][answer]
-        # Move to the next question by incrementing the question index
-        user_info['question_index'] += 1
-        # Send the next question to the user
-        await send_question(user_id)
+    db.save_quiz_result(user_id, username, score)
 
 
 

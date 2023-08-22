@@ -21,23 +21,8 @@ systemctl start bot.service
 sudo systemctl restart bot.service
 ```
 
----
+</div>
 
- #### Make file executable:
- ### (make changes!!!)
-```bash
-chmod +x auto_pull.sh
-```
-
- Transfer your ssh key to the server so you don't have to enter a password:
-    
-```bash
-ssh-copy-id -i ~/.ssh/id_rsa.pub -p $VPS_PORT $VPS_USER@$VPS_IP
-```
- Run the file:
-
-```bash
-./auto_pull.sh
-```
+ 
 
 

@@ -131,6 +131,6 @@ async def get_top(message: types.Message):
     top_result = quiz_db.get_top_result()
     if top_result:
         username, score = top_result
-        await message.answer(f"Найкращий результат : User: <b>{username.capitalize()}</b>: <b>{score}</b> очків", parse_mode='HTML')
+        await message.answer(f"Найкращий результат : User: <b>{username}</b>: <b>{score}</b> очків", parse_mode='HTML')
     else:
         await message.answer("Жодного результату зараз немає")

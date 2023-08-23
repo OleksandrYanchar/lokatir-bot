@@ -52,7 +52,7 @@ async def cmd_start(message: types.Message):
 async def creators(message: types.Message):
     markup = types.InlineKeyboardMarkup(row_width=1)
     creator_links = [
-        types.InlineKeyboardButton("OleksandrYanchar GitHub", url="https://github.com/OleksandrYanchar"),
+            types.InlineKeyboardButton("OleksandrYanchar GitHub", url="https://github.com/OleksandrYanchar"),
         types.InlineKeyboardButton("YuriiDorosh GitHub", url="https://github.com/YuriiDorosh"),
         types.InlineKeyboardButton("saintqqe Instagram", url="https://www.instagram.com/saintqqe/"),
         types.InlineKeyboardButton("y_u_r_a111 Instagram", url="https://www.instagram.com/y_u_r_a111/"),

@@ -27,6 +27,8 @@ async def cmd_start(message: types.Message):
                                             '/quiz: для початку вікторини\n'
                                             '/top: показує найкращий результат у квізі\n'
                                             '/HowRomanAreYou: показує на скільки відсотків ви Локатир Роман\n'
+                                            '/rofl: відправляє рандомний анекдот про Романа\n'
+                                            '/ban: ( ͡° ͜ʖ ͡°)\n'
                                             '/creators: посилання на авторів бота\n', parse_mode='HTML')
     if message.chat.type == 'private':
         #send loggs to admins in dm and append logging txt file

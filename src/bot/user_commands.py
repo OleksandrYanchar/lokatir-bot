@@ -2,6 +2,7 @@ from aiogram import Bot, Dispatcher, types
 from datetime import datetime, timedelta
 from settings import dp,bot, start_time, admins_ID
 from users_database import UsersDatabase
+from jokes import jokes
 import os
 import random
 
@@ -15,7 +16,7 @@ async def cmd_start(message: types.Message):
         users_db.add_user(user_id)
     #makes commands board for users
     user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    user_markup.add('/quiz', '/creators','/ban').add('/HowRomanAreYou','/top')
+    user_markup.add('/quiz', '/creators','/ban').add('/HowRomanAreYou','/top', '/rofl')
     # add board switcher for admins
     if message.from_user.id in admins_ID:
         user_markup.add('/admin')
@@ -103,3 +104,7 @@ async def ban_reply(message: types.Message):
     with open('../pictures/tate.mp4', 'rb') as tate:
         await message.reply_animation(animation=tate)
 
+@dp.message_handler(commands=['rofl'])
+async def joke(message: types.Message):
+    joke = random.choice(jokes)
+    await bot.send_message(message.chat.id, joke)

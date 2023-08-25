@@ -128,9 +128,11 @@ async def send_result_message( user_id, score):
 
 @dp.message_handler(commands=['top'])
 async def get_top(message: types.Message):
-    top_result = quiz_db.get_top_result()
-    if top_result:
-        username, score = top_result
-        await message.answer(f"Найкращий результат : User: <b>{username}</b>: <b>{score}</b> очків", parse_mode='HTML')
+    top_results = quiz_db.get_top_results(limit=10)
+    if top_results:
+        response = "Топ 10 результатів:\n"
+        for index, (username, score) in enumerate(top_results, start=1):
+            response += f"{index}. <b>{username}</b>: {score} очків\n"
+        await message.answer(response, parse_mode='HTML')
     else:
         await message.answer("Жодного результату зараз немає")

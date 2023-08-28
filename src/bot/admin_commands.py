@@ -1,16 +1,18 @@
 import os
 import random
 from aiogram import Bot, Dispatcher, types
-from settings import bot, dp, chupa_id, chupa_ID, admins_ID,photos_directory
+from settings import bot, dp, chupa_id, admins_ID,photos_directory
 from users_database import  UsersDatabase
 
 users_db = UsersDatabase()
+
+tracking_enabled = True
 
 @dp.message_handler(commands=['admin'])
 async def admin_menu(message: types.Message):
     if message.from_user.id in admins_ID:
         user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        user_markup.add('/restartTracking', '/stopTracking', '/changeTrackID').add('/users','/sendAlert','/stats').add('/addUser','/back')
+        user_markup.add('/restartTracking', '/stopTracking', '/tracks').add('/users','/sendAlert','/addUser').add('/addTrackID','removeTrackID').add('/stats','/back')
         await message.reply("Адмін меню", reply_markup=user_markup)
 @dp.message_handler(commands=['back'])
 async def default_menu(message: types.Message):
@@ -45,64 +47,87 @@ async def send_message(message: types.Message):
             await  message.reply('введи текст')
 
 @dp.message_handler(commands=['restartTracking'])
-# Handle 'restartTracking' command to restart tracking
 async def start_tracking(message: types.Message):
-    global chupa_id
-    if message.from_user.id in admins_ID:
-        chupa_id = chupa_ID
+    global tracking_enabled
+    if message.from_user.id in admins_ID and not tracking_enabled:
+        tracking_enabled = True
         for IDs in admins_ID:
             await bot.send_message(IDs, 'tracking started')
-
 @dp.message_handler(commands=['stopTracking'])
-# Handle 'stopTracking' command to stop Tracking
-
 async def stop_tracking(message: types.Message):
-    global chupa_id
-    if message.from_user.id in admins_ID:
-        chupa_id +=1
+    global tracking_enabled
+    if message.from_user.id in admins_ID and tracking_enabled:
+        tracking_enabled = False
         for IDs in admins_ID:
-            await bot.send_message(IDs,   'tracking stopped')
+            await bot.send_message(IDs, 'tracking stopped')
 
+@dp.message_handler(commands=['addTrackID'])
+async def add_track_id(message: types.Message):
+        global chupa_id
+        if message.from_user.id in admins_ID:
+            if len(message.text.split()) > 1:
+                user_ids = [id.strip() for id in message.text.split()[1:] if id.strip().isdigit()]
+                added_users = 0
+                for user_id in user_ids:
+                    if user_id not in chupa_id:
+                        chupa_id.append(user_id)
+                        added_users += 1
+                if added_users > 0:
+                    await message.reply(f'Додано {added_users} треків')
+                else:
+                    await message.reply('Всі користувачі вже трекаються')
+            else:
+                await message.reply('Введи айді')
 
-@dp.message_handler(commands=['changeTrackID'])
-# Handle 'changeTrackID' command to change tracked users ID defined in chupa_id
-
-async def change_track_id(message: types.Message):
+@dp.message_handler(commands=['removeTrackID'])
+async def remove_track_id(message: types.Message):
     global chupa_id
-    command_parts = message.text.split()
     if message.from_user.id in admins_ID:
-        if len(command_parts) > 1:
-            new_chupa_id = int(command_parts[-1])
-            chupa_id = new_chupa_id
-            await message.reply(f"Ви змінили ID для відстеження повідомлень на {chupa_id}")
-            for IDs in admins_ID:
-                await bot.send_message(IDs, f'тепер ,бот трекає {chupa_id}')
+        if len(message.text.split()) > 1:
+            user_ids = [id.strip() for id in message.text.split()[1:] if id.strip().isdigit()]
+            removed_ids = []
+            for user_id in user_ids:
+                if user_id in chupa_id:
+                    chupa_id.remove(user_id)
+                    removed_ids.append(user_id)
+            if removed_ids:
+                await message.reply(f"Видалено айді: {removed_ids}")
+            else:
+                await message.reply('Не знайдено айді для видалення')
         else:
-            await message.reply("Введіть команду у форматі /changeTrackID ID")
-@dp.message_handler(commands=['addUser'])
-async def add_user(message: types.Message):
+            await message.reply('Введи айді')
+
+
+@dp.message_handler(commands=['addTrackID'])
+async def add_track_id(message: types.Message):
+    global chupa_id
     if message.from_user.id in admins_ID:
         if len(message.text.split()) > 1:
             user_ids = [id.strip() for id in message.text.split()[1:] if id.strip().isdigit()]
             added_users = 0
             for user_id in user_ids:
-                if not users_db.user_exists(user_id):
-                    users_db.add_user(user_id)
+                if user_id not in chupa_id:
+                    chupa_id.append(user_id)
                     added_users += 1
             if added_users > 0:
-                await message.reply(f'додано {added_users} користувачів до бд')
+                await message.reply(f'Додано {added_users} треків')
             else:
-                await message.reply(' всі  користувачі вже існують у бд')
+                await message.reply('Всі користувачі вже трекаються')
         else:
-            await message.reply(' введи айді')
+            await message.reply('Введи айді')
 
+
+@dp.message_handler(commands=['tracks'])
+async def sned_tracks(message: types.Message):
+    if message.from_user.id in admins_ID:
+        await message.answer(chupa_id)
 
 
 @dp.message_handler()
 #monitor spesific users messages and reply to them by sending random picture, ID is defined in chupa_id
 async def chupa(message: types.Message):
     photo_files = [file for file in os.listdir(photos_directory) if file.endswith('.jpg')]
-    if message.from_user.id == chupa_id:
+    if str(message.from_user.id) in chupa_id and tracking_enabled is True:
         random_photo = random.choice(photo_files)
         with open(os.path.join(photos_directory, random_photo), 'rb') as photo:
             await message.reply_photo(photo)

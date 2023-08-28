@@ -31,9 +31,9 @@ admins_ID = [int(id) for id in admins_ID.split(',')]
 
 #ID for tracking specific user's messages
 #used in restartTracking, stopTracking and changeTrackID funcs
-chupa_id = os.getenv("chupa")
-chupa_id = int(chupa_id)
-chupa_ID = chupa_id
+chupa_id_str = os.getenv("chupa")
+chupa_id = [] if chupa_id_str is None or chupa_id_str.strip() == '' else eval(chupa_id_str)
+
 
 #varieble used to control bot version at launch
 start_time = datetime.now() + timedelta(hours=2)

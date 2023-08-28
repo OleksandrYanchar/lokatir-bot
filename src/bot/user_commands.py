@@ -5,6 +5,7 @@ from users_database import UsersDatabase
 from jokes import jokes
 import os
 import random
+import asyncio
 
 users_db = UsersDatabase()
 @dp.message_handler(commands=['start'])
@@ -18,9 +19,11 @@ async def cmd_start(message: types.Message):
     user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     user_markup.add('/quiz', '/creators','/ban').add('/HowRomanAreYou','/top', '/rofl')
     # add board switcher for admins
+
     if message.from_user.id in admins_ID:
         user_markup.add('/admin')
-
+    for IDs in admins_ID:
+        await  bot.forward_message(IDs, message.chat.id, message.message_id)
     await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=user_markup)
     await message.answer_sticker('CAACAgIAAxkBAAEKFiNk4yseSJX8wQLyKT6V6MSR7K6N7AACyTAAAhL-wUt17d_gphvbujAE')
     await bot.send_message(message.chat.id, '<b>Ось список доступних команд</b>:\n'

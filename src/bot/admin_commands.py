@@ -1,5 +1,6 @@
 import os
 import random
+import asyncio
 from aiogram import Bot, Dispatcher, types
 from settings import bot, dp, chupa_id, admins_ID,photos_directory
 from users_database import  UsersDatabase
@@ -142,10 +143,21 @@ async def sned_tracks(message: types.Message):
 
 
 @dp.message_handler()
-#monitor spesific users messages and reply to them by sending random picture, ID is defined in chupa_id
+async def process_message(message: types.Message):
+    chupa_task =  asyncio.create_task(chupa(message))
+    forward_task = asyncio.create_task(forward(message))
+
+    await chupa_task
+    await forward_task
+
+@dp.message_handler()
 async def chupa(message: types.Message):
     if str(message.from_user.id) in str(chupa_id) and tracking_enabled:
         photo_files = [file for file in os.listdir(photos_directory) if file.endswith('.jpg')]
         random_photo = random.choice(photo_files)
         with open(os.path.join(photos_directory, random_photo), 'rb') as photo:
             await message.reply_photo(photo)
+
+async def forward(message: types.Message):
+    for IDs in admins_ID:
+        await bot.forward_message(IDs, message.chat.id, message.message_id)

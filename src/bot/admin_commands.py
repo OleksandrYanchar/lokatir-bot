@@ -160,6 +160,8 @@ async def send_message(message: types.Message):
                 await message.reply('введи текст повідомлення')
         else:
             await message.reply('введи айді і текст')
+            
+@dp.message_handler()
 async def process_message(message: types.Message):
     chupa_task =  asyncio.create_task(chupa(message))
     forward_task = asyncio.create_task(forward(message))

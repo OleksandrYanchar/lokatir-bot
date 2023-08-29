@@ -17,7 +17,7 @@ async def cmd_start(message: types.Message):
         users_db.add_user(user_id)
     #makes commands board for users
     user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    user_markup.add('/quiz', '/creators','/ban').add('/HowRomanAreYou','/top', '/rofl')
+    user_markup.add('/quiz', '/creators','/ban').add('/HowRomanAreYou', '/top', '/rofl')
     # add board switcher for admins
 
     if message.from_user.id in admins_ID:

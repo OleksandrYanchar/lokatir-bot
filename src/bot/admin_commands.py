@@ -13,7 +13,7 @@ tracking_enabled = True
 async def admin_menu(message: types.Message):
     if message.from_user.id in admins_ID:
         user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        user_markup.add('/restartTracking', '/stopTracking', '/tracks').add('/users','/sendAlert','/addUser').add('/addTrackID','removeTrackID').add('/stats','/back')
+        user_markup.add('/restartTracking', '/stopTracking', '/tracks').add('/users','/sendAlert','/addUser').add('/addTrackID','removeTrackID','/sendMessage').add('/stats','/back')
         await message.reply("Адмін меню", reply_markup=user_markup)
 @dp.message_handler(commands=['back'])
 async def default_menu(message: types.Message):
@@ -137,12 +137,29 @@ async def add_track_id(message: types.Message):
 
 
 @dp.message_handler(commands=['tracks'])
-async def sned_tracks(message: types.Message):
+async def send_tracks(message: types.Message):
     if message.from_user.id in admins_ID:
         await message.answer(chupa_id)
 
 
-@dp.message_handler()
+@dp.message_handler(commands=['sendMessage'])
+async def send_message(message: types.Message):
+    if message.from_user.id in admins_ID:
+        if len(message.text.split()) > 1:
+            if len(message.text.split()) > 2:
+                if not message.text.split()[1].lstrip('-').isdigit():
+                    await message.reply('айді повинно бути цифрами')
+                else:
+                    alert_text = ' '.join(message.text.split()[2:])
+                    user_id = int(message.text.split()[1])
+                    try:
+                        await bot.send_message(user_id, alert_text)
+                    except Exception as e:
+                        await message.reply(f'Error: {e}')
+            else:
+                await message.reply('введи текст повідомлення')
+        else:
+            await message.reply('введи айді і текст')
 async def process_message(message: types.Message):
     chupa_task =  asyncio.create_task(chupa(message))
     forward_task = asyncio.create_task(forward(message))

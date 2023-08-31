@@ -8,13 +8,13 @@ from users_database import  UsersDatabase
 users_db = UsersDatabase()
 
 tracking_enabled = True
-
+get_notes_status = False
 @dp.message_handler(commands=['admin'])
 async def admin_menu(message: types.Message):
     if message.from_user.id in admins_ID:
-        user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        user_markup.add('/restartTracking', '/stopTracking', '/tracks').add('/users','/sendAlert','/addUser').add('/addTrackID','removeTrackID','/sendMessage').add('/stats','/back')
-        await message.reply("Адмін меню", reply_markup=user_markup)
+        admin_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        admin_markup.add('/restartTracking', '/stopTracking', '/tracks').add('/users','/sendAlert','/addUser').add('/addTrackID','removeTrackID','/sendMessage').add('/stats','/back').add('/addNote', '/notes')
+        await message.reply("Адмін меню", reply_markup=admin_markup)
 @dp.message_handler(commands=['back'])
 async def default_menu(message: types.Message):
     if message.from_user.id in admins_ID:
@@ -161,13 +161,35 @@ async def send_message(message: types.Message):
         else:
             await message.reply('введи айді і текст')
 
+@dp.message_handler(commands=['addNote'])
+async def add_note(message: types.Message):
+    global get_notes_status
+    if message.from_user.id in admins_ID:
+        await message.answer('Enter notes')
+        get_notes_status = True
+
+@dp.message_handler(commands=['notes'])
+async def get_notes(message: types.message):
+    if message.chat.type == 'private':
+        if message.from_user.id in admins_ID:
+            await bot.send_document(message.chat.id, open('../../notes.txt', 'rb'))
+    else:
+        await message.answer( "Недостатньо прав")
+
 @dp.message_handler()
 async def process_message(message: types.Message):
+    global get_notes_status
+
+    append_notes_task = asyncio.create_task(append_notes(message))
     chupa_task =  asyncio.create_task(chupa(message))
     forward_task = asyncio.create_task(forward(message))
 
-    await chupa_task
-    await forward_task
+    if get_notes_status:
+        await append_notes_task
+    else:
+        await chupa_task
+        await forward_task
+
 
 @dp.message_handler()
 async def chupa(message: types.Message):
@@ -180,3 +202,17 @@ async def chupa(message: types.Message):
 async def forward(message: types.Message):
     for IDs in admins_ID:
         await bot.forward_message(IDs, message.chat.id, message.message_id)
+
+
+@dp.message_handler()
+async def append_notes(message: types.Message):
+    global get_notes_status
+    if message.from_user.id in admins_ID:
+        if get_notes_status:
+            try:
+                with open('../../notes.txt', 'a') as file:
+                    file.write(message.text + '\n')
+                    await message.answer('Note added')
+            except Exception as e:
+                await message.answer(e)
+            get_notes_status= False

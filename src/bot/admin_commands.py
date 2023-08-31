@@ -19,7 +19,7 @@ async def admin_menu(message: types.Message):
 async def default_menu(message: types.Message):
     if message.from_user.id in admins_ID:
         user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        user_markup.add('/quiz', '/creators').add('/HowRomanAreYou', '/top')
+        user_markup.add('/quiz', '/creators', '/ban').add('/HowRomanAreYou', '/top', '/rofl')
         if message.from_user.id in admins_ID:
             user_markup.add('/admin')
         await message.reply("Звичайне меню", reply_markup=user_markup)
@@ -160,7 +160,7 @@ async def send_message(message: types.Message):
                 await message.reply('введи текст повідомлення')
         else:
             await message.reply('введи айді і текст')
-            
+
 @dp.message_handler()
 async def process_message(message: types.Message):
     chupa_task =  asyncio.create_task(chupa(message))

@@ -89,6 +89,7 @@ async def how_roman_are_you(message: types.Message):
             await bot.send_message(IDs, f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
                                              f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
                                              f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
+                                             f" User: ID:{message.from_user.id} Username: @{message.from_user.username} first name: {message.from_user.first_name} last name: {message.from_user.last_name}\n "
                                              f" is {procent}% roman {datetime.now() + timedelta(hours=2)}\n\n\n")
 
     keyboard = types.InlineKeyboardMarkup()

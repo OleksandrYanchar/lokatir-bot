@@ -1,11 +1,12 @@
-from settings import bot, dp
-from aiogram import executor
+import asyncio
+from aiogram import types, Dispatcher
+from aiogram.utils import executor
+from configs.settings import dp, bot, admins_ID
+from admins.notes import get_notes_status
+
 
 if __name__ == '__main__':
-    from questions import *
-    from quiz import *
-    from settings import *
-    from user_commands import *
-    from admin_commands import *
-
-    executor.start_polling(dp)
+    from users import quiz, user_commands
+    from admins import tracks, users, notes
+    from message_handlers import messages_handler
+    executor.start_polling(dp, skip_updates=True)

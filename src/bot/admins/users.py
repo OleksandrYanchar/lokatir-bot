@@ -1,6 +1,6 @@
-from aiogrma import Bot, Dispetcher, types
-from ..users_database import UsersDatabase
-from ..settings import  bot, dp, admins_ID
+from aiogram import  types
+from .users_database import UsersDatabase
+from configs.settings import bot, dp, admins_ID, start_time, results_file
 
 users_db = UsersDatabase()
 
@@ -65,3 +65,14 @@ async def send_message(message: types.Message):
                 await message.reply('введи текст повідомлення')
         else:
             await message.reply('введи айді і текст')
+
+
+@dp.message_handler(commands=['stats'])
+async def stats(message: types.Message):
+    #works only for admins to geet loggin file from server
+    if message.chat.type == 'private':
+        if message.from_user.id in admins_ID:
+            await bot.send_message(message.chat.id, f'версія бота від {start_time} ')
+            await bot.send_document(message.chat.id, open(results_file, 'rb'))
+    else:
+        await bot.send_message(message.chat.id, "Недостатньо прав")

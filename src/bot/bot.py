@@ -1,8 +1,6 @@
-import asyncio
-from aiogram import types, Dispatcher
 from aiogram.utils import executor
-from configs.settings import dp, bot, admins_ID
-from admins.notes import get_notes_status
+from configs.settings import dp
+
 
 
 if __name__ == '__main__':

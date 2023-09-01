@@ -40,6 +40,8 @@ admins_ID = [int(id) for id in admins_ID.split(',')]
 chupa_id_str = os.getenv("chupa")
 chupa_id = []
 
+tracking_enabled = True
+
 if chupa_id_str:
     chupa_id = [int(id_str) for id_str in chupa_id_str.split(',') if id_str.strip()]
 

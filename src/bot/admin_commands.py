@@ -3,19 +3,33 @@ import random
 import asyncio
 from aiogram import Bot, Dispatcher, types
 from settings import bot, dp, chupa_id, admins_ID,photos_directory
-from users_database import  UsersDatabase
+from users_database import UsersDatabase
+from markups import *
+
 
 users_db = UsersDatabase()
 
 tracking_enabled = True
 get_notes_status = False
-@dp.message_handler(commands=['admin'])
-async def admin_menu(message: types.Message):
+@dp.message_handler(commands=['admin','userMenu','TrackControll',
+                              'UsersControll', 'NotesNStats', 'back' ])
+async def admins_murkups(message: types.Message):
     if message.from_user.id in admins_ID:
-        admin_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        admin_markup.add('/restartTracking', '/stopTracking', '/tracks').add('/users','/sendAlert','/addUser').add('/addTrackID','removeTrackID','/sendMessage').add('/stats','/back').add('/addNote', '/notes')
-        await message.reply("Адмін меню", reply_markup=admin_markup)
-@dp.message_handler(commands=['back'])
+        if message.text in ['/admin', '/back']:
+            await message.reply("Admin Menu", reply_markup=create_admin_markup())
+        elif message.text == '/TrackControll':
+            await message.reply("Tracks Controll Menu:", reply_markup=create_tracks_controll_markup())
+        elif message.text == '/NotesNStats':
+            await message.reply("Notes And Stats Menu:", reply_markup=create_notes_n_stats_markup())
+        elif message.text =='/UsersControll':
+            await message.reply("Users Controll Menu:", reply_markup=create_users_controll_markup())
+        elif message.text == '/userMenu':
+            user_markup = create_user_markup()
+            if message.from_user.id in admins_ID:
+                user_markup.add('/admin')
+            await message.reply("User Menu:", reply_markup=user_markup)
+
+@dp.message_handler(commands=['userMenu'])
 async def default_menu(message: types.Message):
     if message.from_user.id in admins_ID:
         user_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -23,6 +37,10 @@ async def default_menu(message: types.Message):
         if message.from_user.id in admins_ID:
             user_markup.add('/admin')
         await message.reply("Звичайне меню", reply_markup=user_markup)
+
+
+
+
 @dp.message_handler(commands=['users'])
 async def get_ids(message: types.Message):
     users = []

@@ -7,6 +7,12 @@ import os
 #set the phot dir for chupa function
 photos_directory = "../lokatir/"
 
+quiz_picks = '../pictures'
+
+# Get the absolute path to results.txt
+results_file = '../../results.txt'
+# Use results_file in your code
+
 #load enviroment from environment .env file
 load_dotenv()
 

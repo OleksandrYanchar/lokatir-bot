@@ -2,10 +2,10 @@ import random
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram import Bot, Dispatcher, types
 from datetime import datetime, timedelta
-from settings import chat_data, user_data, bot, dp, bot, admins_ID,questions
-from questions import original_questions
-from quiz_database import QuizDatabase
-from users_database import UsersDatabase
+from configs.settings import chat_data, user_data, bot, dp, bot, admins_ID,questions, results_file,quiz_picks
+from .questions import original_questions
+from .quiz_database import QuizDatabase
+from admins.users_database import UsersDatabase
 
 users_db = UsersDatabase()
 quiz_db = QuizDatabase()
@@ -33,7 +33,7 @@ async def start_quiz(message: types.Message):
             await bot.send_message(IDs, f" @{message.chat.username} ID: {message.chat.id}\n"
                                         f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
                                         f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
-            with open('results.txt', 'a') as file:
+            with open(results_file, 'a') as file:
                 file.write(f" @{message.chat.username} ID: {message.chat.id}\n"
                            f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
                            f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
@@ -44,7 +44,7 @@ async def start_quiz(message: types.Message):
                                         f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
                                         f" Participants: {await bot.get_chat_members_count(message.chat.id)}"
                                         f" Just started quiz at {datetime.now() + timedelta(hours=2)}\n\n\n")
-            with open('results.txt', 'a') as file:
+            with open(results_file, 'a') as file:
                 file.write(f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
                            f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
                            f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
@@ -91,25 +91,25 @@ async def send_result_message( user_id, score):
     # def result messages depended on users score
     if -1000 < score <= 0:
         result_message = 'Ви взагалі не знаєте Романа, ідіть підівчіться та не позортесь'
-        await bot.send_photo(user_id, photo=open('../pictures/pidyob.png', 'rb'))
+        await bot.send_photo(user_id, photo=open(f'{quiz_picks}/pidyob.png', 'rb'))
     elif 0 < score <= 10:
         result_message = 'Дуже слабенько, ви напевно лише вчора дізналися хто такий Роман'
-        await bot.send_photo(user_id, photo=open('../pictures/ok.png', 'rb'))
+        await bot.send_photo(user_id, photo=open(f'{quiz_picks}/ok.png', 'rb'))
     elif 10 < score <= 35:
         result_message = 'Ви знаєте Романа не перший день, але все одно цього недостатньо'
-        await bot.send_photo(user_id, photo=open('../pictures/patriot.png', 'rb'))
+        await bot.send_photo(user_id, photo=open(f'{quiz_picks}/patriot.png', 'rb'))
     elif 30 < score <= 72:
         result_message = 'Непогано, ще трішки і ви зможете сказати, що ви фанат Романа'
-        await bot.send_photo(user_id, photo=open('../pictures/dovolniy.png', 'rb'))
+        await bot.send_photo(user_id, photo=open(f'{quiz_picks}/dovolniy.png', 'rb'))
     elif 70 < score <= 130:
         result_message = 'Ви справжній фанат Романа'
-        await bot.send_photo(user_id, photo=open('../pictures/cool_1.png', 'rb'))
+        await bot.send_photo(user_id, photo=open(f'{quiz_picks}/cool_1.png', 'rb'))
     elif 130 < score:
         result_message = 'Ви Локатир Романа, або його кращий друг'
-        await bot.send_photo(user_id, photo=open('../pictures/bratva.png', 'rb'))
+        await bot.send_photo(user_id, photo=open(f'{quiz_picks}/bratva.png', 'rb'))
     else:
         result_message = 'Сама ти нахуй нікому не потрібна, шмара'
-        await bot.send_photo(user_id, photo=open('../pictures/minus.jpg', 'rb'))
+        await bot.send_photo(user_id, photo=open(f'{quiz_picks}/minus.jpg', 'rb'))
 
     await bot.send_message(user_id, f'Ваш рахунок: {score}')
     await bot.send_message(user_id, f"{result_message}\n<a href='https://t.me/lokatir_bot'>Перейти до бота</a>", parse_mode='HTML')
@@ -118,7 +118,7 @@ async def send_result_message( user_id, score):
         await bot.send_message(IDs, f" @{username} ID: {user_id}\n"
                                     f" first name : {first_name} last name: {last_name}\n"
                                     f" finished quiz, with score: {score} at {datetime.now() + timedelta(hours=2)}\n\n\n")
-    with open('results.txt', 'a') as file:
+    with open(results_file, 'a') as file:
         file.write(f" @{username} ID: {user_id}\n"
                    f" first name : {first_name} last name: {last_name}\n"
                    f" finished quiz, with score: {score} at {datetime.now() + timedelta(hours=2)}\n\n\n")

@@ -66,9 +66,6 @@ async def creators(message: types.Message):
     markup.add(*creator_links)
     await bot.send_message(message.chat.id, "Посилання на авторів бота:", reply_markup=markup)
 
-
-
-
 @dp.message_handler(commands=['HowRomanAreYou'])
 #handle the '/HowROmanAreYou' command
 #generate random numb in range 0 - 100

@@ -55,6 +55,8 @@ creator_links = [
         types.InlineKeyboardButton("saintqqe Instagram", url="https://www.instagram.com/saintqqe/"),
         types.InlineKeyboardButton("y_u_r_a111 Instagram", url="https://www.instagram.com/y_u_r_a111/"),
         types.InlineKeyboardButton("saintqqe Twitch", url="https://www.twitch.tv/saintqqe"),
-        types.InlineKeyboardButton("fortnite_dota Twitch", url="https://www.twitch.tv/fortnite_dota")
+        types.InlineKeyboardButton("fortnite_dota Twitch", url="https://www.twitch.tv/fortnite_dota"),
+        types.InlineKeyboardButton("Donation", url="https://send.monobank.ua/jar/4J4iy8p8i3"),
+        types.InlineKeyboardButton("All links", url="https://linktr.ee/lokatirbot"),
     ]
 

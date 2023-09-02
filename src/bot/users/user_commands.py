@@ -27,13 +27,7 @@ async def cmd_start(message: types.Message):
         await bot.forward_message(IDs, message.chat.id, message.message_id)
     await message.answer('Привіт, я бот-вікторина Локатира романа.', reply_markup=user_markup)
     await message.answer_sticker('CAACAgIAAxkBAAEKFiNk4yseSJX8wQLyKT6V6MSR7K6N7AACyTAAAhL-wUt17d_gphvbujAE')
-    await bot.send_message(message.chat.id, '<b>Ось список доступних команд</b>:\n'
-                                            '/quiz: для початку вікторини\n'
-                                            '/top: показує найкращий результат у квізі\n'
-                                            '/HowRomanAreYou: показує на скільки відсотків ви Локатир Роман\n'
-                                            '/rofl: відправляє рандомний анекдот про Романа\n'
-                                            '/ban: ( ͡° ͜ʖ ͡°)\n'
-                                            '/creators: посилання на авторів бота\n', parse_mode='HTML')
+    await help_menu(message)
     if message.chat.type == 'private':
         #send loggs to admins in dm and append logging txt file
         for IDs in admins_ID:
@@ -51,7 +45,17 @@ async def cmd_start(message: types.Message):
                                         f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
                                         f" Just started bot at {datetime.now() + timedelta(hours=2)}\n\n\n")
 
-
+@dp.message_handler(commands=['help'])
+async def help_menu(message: types.Message):
+    await bot.send_message(message.chat.id, '<b>Ось список доступних команд</b>:\n'
+                                            '/quiz: для початку вікторини\n'
+                                            '/top: показує найкращий результат у квізі\n'
+                                            '/HowRomanAreYou: показує на скільки відсотків ви Локатир Роман\n'
+                                            '/rofl: відправляє рандомний анекдот про Романа\n'
+                                            '/ban: ( ͡° ͜ʖ ͡°)\n'
+                                            '/sendFeedBack: відправляє ваше повідомлення для адміністрації\n'
+                                            '/help: показує список доступних команд'
+                                            '/creators: посилання на авторів бота\n', parse_mode='HTML')
 
 
 @dp.message_handler(commands=['creators'])
@@ -89,7 +93,7 @@ async def how_roman_are_you(message: types.Message):
 
 @dp.message_handler(commands=['ban'])
 async def ban_reply(message: types.Message):
-    with open('../quiz_pictures/tate.mp4', 'rb') as tate:
+    with open('../pictures/quiz_pictures/tate.mp4', 'rb') as tate:
         await message.reply_animation(animation=tate)
 
 @dp.message_handler(commands=['rofl'])
@@ -97,10 +101,10 @@ async def joke(message: types.Message):
     joke = random.choice(jokes)
     await bot.send_message(message.chat.id, joke)
 
-@dp.message_handler(commands=['sendQuestion'])
+@dp.message_handler(commands=['sendFeedBack'])
 async def send_question(message: types.Message):
     global get_question_status
-    await message.answer('Напишіть питання')
+    await message.answer('Напишіть ваше повідомлення')
     get_question_status = True
 
 async def get_question(message: types.Message):

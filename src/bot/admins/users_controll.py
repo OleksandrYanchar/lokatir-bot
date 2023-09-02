@@ -1,5 +1,5 @@
-from aiogram import  types
-from .users_database import UsersDatabase
+from aiogram import types
+from data_storge.users_database import UsersDatabase
 from configs.settings import bot, dp, admins_ID, start_time, results_file
 
 users_db = UsersDatabase()

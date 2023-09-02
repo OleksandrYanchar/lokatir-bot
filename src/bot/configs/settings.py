@@ -5,9 +5,9 @@ from aiogram import Bot, Dispatcher, types
 import os
 
 #set the phot dir for chupa function
-photos_directory = "../lokatir/"
+photos_directory = "../pictures/lokatir/"
 
-quiz_picks = '../pictures'
+quiz_picks = '../pictures/quiz_pictures'
 
 # Get the absolute path to results.txt
 results_file = '../../results.txt'
@@ -20,7 +20,7 @@ load_dotenv()
 TOKEN = os.getenv("TOKEN")
 
 #initialize the bot and dispatcher
-bot = Bot(token=TOKEN)
+bot = Bot(TOKEN)
 dp = Dispatcher(bot=bot)
 
 # Dictionary to store user-specific data during the quiz
@@ -49,4 +49,12 @@ if chupa_id_str:
 #varieble used to control bot version at launch
 start_time = datetime.now() + timedelta(hours=2)
 
+creator_links = [
+            types.InlineKeyboardButton("OleksandrYanchar GitHub", url="https://github.com/OleksandrYanchar"),
+        types.InlineKeyboardButton("YuriiDorosh GitHub", url="https://github.com/YuriiDorosh"),
+        types.InlineKeyboardButton("saintqqe Instagram", url="https://www.instagram.com/saintqqe/"),
+        types.InlineKeyboardButton("y_u_r_a111 Instagram", url="https://www.instagram.com/y_u_r_a111/"),
+        types.InlineKeyboardButton("saintqqe Twitch", url="https://www.twitch.tv/saintqqe"),
+        types.InlineKeyboardButton("fortnite_dota Twitch", url="https://www.twitch.tv/fortnite_dota")
+    ]
 

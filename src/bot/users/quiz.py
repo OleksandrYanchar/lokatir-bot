@@ -3,9 +3,9 @@ from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeybo
 from aiogram import Bot, Dispatcher, types
 from datetime import datetime, timedelta
 from configs.settings import chat_data, user_data, bot, dp, bot, admins_ID,questions, results_file,quiz_picks
-from .questions import original_questions
-from .quiz_database import QuizDatabase
-from admins.users_database import UsersDatabase
+from configs.questions import original_questions
+from data_storge.quiz_database import QuizDatabase
+from data_storge.users_database import UsersDatabase
 
 users_db = UsersDatabase()
 quiz_db = QuizDatabase()

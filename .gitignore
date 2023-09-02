@@ -8,8 +8,9 @@
 /screenshots/*
 !/screenshots/.gitkeep
 
-# Old pictures which used for README
+# Old quiz_pictures which used for README
 src/images/readme/old
+venv_name
 
 *.txt
 *.db

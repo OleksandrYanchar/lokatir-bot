@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher, types
 import os
+from typing import List, Dict, Optional
 
 # Directory for photos used in the 'chupa' function
 photos_directory = "../pictures/lokatir/"
@@ -21,16 +22,16 @@ bot = Bot(TOKEN)
 dp = Dispatcher(bot=bot)
 
 # Dictionary to store user-specific data for the quiz
-user_data = {}
+user_data: Dict["str", "str"]= {}
 
 # Dictionary to store chat-specific data
-chat_data = {}
+chat_data: Dict["str", "str"]= {}
 
-questions = {}
+questions: Dict["str", "str"]= {}
 
 # Retrieve and process admin IDs from the .env file
-admins_ID = os.getenv("admins_ID")
-admins_ID = [int(id) for id in admins_ID.split(",")]
+env_admins_ID: Optional[str]  = os.getenv("admins_ID")
+admins_ID: List[int] = [int(id) for id in (env_admins_ID or "").split(",") if id.strip()]
 
 # IDs to track specific user messages; used in 'restartTracking', 'stopTracking', and 'changeTrackID' functions
 chupa_id_str = os.getenv("chupa")

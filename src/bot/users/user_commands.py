@@ -3,15 +3,17 @@ from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeybo
 from aiogram import Bot, Dispatcher, types
 from datetime import datetime, timedelta
 from configs.markups import create_user_markup
-from configs.settings import chat_data, user_data, bot, dp, admins_ID, questions, results_file
-from .questions import original_questions
-from .quiz_database import QuizDatabase
-from admins.users_database import UsersDatabase
-from .jokes import jokes
+from configs.settings import chat_data, user_data, bot, dp, admins_ID, questions, results_file, creator_links
+from configs.questions import original_questions
+from data_storge.users_database import UsersDatabase
+from configs.jokes import jokes
 
 
 
 users_db = UsersDatabase()
+get_question_status = False
+
+
 @dp.message_handler(commands=['start'])
 #handle the '/start' command
 async def cmd_start(message: types.Message):
@@ -56,14 +58,6 @@ async def cmd_start(message: types.Message):
 # Handle 'creators' command to send links for creators
 async def creators(message: types.Message):
     markup = types.InlineKeyboardMarkup(row_width=1)
-    creator_links = [
-            types.InlineKeyboardButton("OleksandrYanchar GitHub", url="https://github.com/OleksandrYanchar"),
-        types.InlineKeyboardButton("YuriiDorosh GitHub", url="https://github.com/YuriiDorosh"),
-        types.InlineKeyboardButton("saintqqe Instagram", url="https://www.instagram.com/saintqqe/"),
-        types.InlineKeyboardButton("y_u_r_a111 Instagram", url="https://www.instagram.com/y_u_r_a111/"),
-        types.InlineKeyboardButton("saintqqe Twitch", url="https://www.twitch.tv/saintqqe"),
-        types.InlineKeyboardButton("fortnite_dota Twitch", url="https://www.twitch.tv/fortnite_dota")
-    ]
 
     markup.add(*creator_links)
     await bot.send_message(message.chat.id, "Посилання на авторів бота:", reply_markup=markup)
@@ -91,16 +85,34 @@ async def how_roman_are_you(message: types.Message):
                                              f" User: ID:{message.from_user.id} Username: @{message.from_user.username} first name: {message.from_user.first_name} last name: {message.from_user.last_name}\n "
                                              f" is {procent}% roman {datetime.now() + timedelta(hours=2)}\n\n\n")
 
-    keyboard = types.InlineKeyboardMarkup()
-    keyboard.add(types.InlineKeyboardButton(text='stop tracking', callback_data='stop'))
-    keyboard.add(types.InlineKeyboardButton(text='restart tracking', callback_data='restart'))
+
 
 @dp.message_handler(commands=['ban'])
 async def ban_reply(message: types.Message):
-    with open('../pictures/tate.mp4', 'rb') as tate:
+    with open('../quiz_pictures/tate.mp4', 'rb') as tate:
         await message.reply_animation(animation=tate)
 
 @dp.message_handler(commands=['rofl'])
 async def joke(message: types.Message):
     joke = random.choice(jokes)
     await bot.send_message(message.chat.id, joke)
+
+@dp.message_handler(commands=['sendQuestion'])
+async def send_question(message: types.Message):
+    global get_question_status
+    await message.answer('Напишіть питання')
+    get_question_status = True
+
+async def get_question(message: types.Message):
+    global get_question_status
+    if get_question_status:
+        try:
+            for IDs in admins_ID:
+                await bot.send_message(IDs, f' Question from user:\n'
+                                            f' Username: @{message.from_user.username}, ID: {message.from_user.id}\n'
+                                            f' First name: {message.from_user.id}, Last name: {message.from_user.id}\n'
+                                            f' {message.text}')
+            await message.answer('Повідомлення відправлене')
+        except Exception as e:
+            await message.answer(str(e))
+        get_question_status = False

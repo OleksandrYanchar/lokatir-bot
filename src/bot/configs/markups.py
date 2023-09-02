@@ -4,7 +4,7 @@ from configs.settings import dp, admins_ID
 
 def create_user_markup():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add('/quiz', '/creators', '/ban').add('/HowRomanAreYou', '/top', '/rofl').add('/sendQuestion', '/help')
+    markup.add('/quiz', '/creators', '/ban').add('/HowRomanAreYou', '/top', '/rofl').add('/sendFeedBack', '/help')
     return markup
 
 

@@ -56,6 +56,13 @@ tee = True
 
 # Provide a comma-separated list of glob patterns to exclude from checks.
 exclude =
+    # venv
+    venv/,
+    env/,
+    venv,
+    env,
+    .env,
+    .venv,
     # git folder
     .git,
     # python cache

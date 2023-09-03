@@ -1,57 +1,57 @@
-<div align="center">
-
-# Bot in Telegram:
-
-```
-https://t.me/lokatir_bot
-``` 
+# Lokatir Telegram Bot: A Tribute to Roman Lokatir
 
 ![picture alt](start_command.png)
 
-<br></br>
+Welcome to the Lokatir Telegram Bot, a tribute to the remarkable [Roman Lokatir](https://www.instagram.com/lokatirroman/). This project is designed with the fans of Roman Lokatir in mind, offering an interactive and fun experience using Aiogram, a leading framework for the Telegram Bot API. Dive in to engage with a series of entertaining features centered around Roman and his universe.
 
-</div>
+### Features
 
-# Lokatir Bot
+#### 1. **Quiz Master**:
+Are you a true fan of Roman Lokatir? Put your knowledge to the test with our quiz module. Challenge your friends and see who reigns supreme in the world of Lokatir trivia.
 
-This project is the "Lokatir-Bot" Telegram bot, designed as a quiz bot for fans of [Roman Lokatir](https://www.instagram.com/lokatirroman/).
+#### 2. **Roman-o-meter**:
+Have you ever pondered about your resemblance with Roman? Our unique Roman-o-meter evaluates your responses and reveals how much you emulate Roman in percentages. The closer to 100%, the more Roman-esque you are!
 
-## Contents
+#### 3. **Jokes & Laughter**:
+Dive into a world of humor with jokes tailored for Roman Lokatir fans. Whether it's to lighten your mood or share a laugh with friends, our collection won't disappoint.
 
-- **ADMINISTRATION.md** - Instructions for bot administration.
-- **bot.service** - Configuration file for running the bot as a service in the system.
-- **DEPLOY.md** - Instructions for deploying the bot on a server.
-- **env.example** - An example configuration file with environment variables.
-- **LICENSE** - License agreement for the use and distribution of the bot.
-- **README.md** - This file with instructions and other useful information.
-- **SETUP.md** - Instructions for bot installation and setup.
-- **start_command.png** - An image related to the startup command.
-- **auto_pull.sh** - Script for automatic code updates from the repository.
-- **db_backup.sh** - Script for database backup.
-- **log_backup.sh** - Script for log backup.
-- **requirements.txt** - List of required libraries and their versions for the bot's operation.
-- **src/** - Directory containing the bot's source code.
+#### 4. **Leaderboard**:
+It's not just about taking the quiz; it's about excelling in it. Check out our leaderboard to see the top scorers. Can you beat the best and claim the top spot?
 
-## Installation
+### Admin Powerhouse
+Lokatir-Bot comes equipped with robust admin functionalities, ensuring smooth operation and management. Admins can navigate through a range of features, fine-tuning the bot's capabilities for an optimal user experience.
 
-Detailed installation information can be found in the [SETUP.md](SETUP.md) file.
+### Dive In!
 
-## License
+If Roman Lokatir holds a special place in your heart and you're ready for some fun:
 
-This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
+1. Install Telegram if you haven't already.
+2. Look up 'LokatirBot' or simply click [this link](https://t.me/lokatir_bot).
+3. Kickstart your interaction, and our bot will take care of the rest!
 
-## Support
+### Feedback & Collaboration
+
+Given that this is our pioneering venture into Aiogram-based bots, we're all ears! Encounter any snags or have ideas to elevate Lokatir-Bot? Please let us know. Your insights are the catalyst for refining this project, ensuring it remains a fan-favorite for years to come.
 
 If you have any questions or suggestions, please contact us:
 
 - Main Developer: Email: , [GitHub](https://github.com/OleksandrYanchar)
-- Project administrator: Email: contact.yuriidorosh@gmail.com, 
+- Project Administrator: Email: contact.yuriidorosh@gmail.com, 
     [GitHub](https://github.com/YuriiDorosh)
+
+
+### Installation
+
+#### Please remember to create and populate the .env file with any type of installation(example in the main folder:env.example)
+
+Detailed installation information can be found in the [SETUP.md](SETUP.md) file.
+
+### License
+
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
 
 ---
 
-© 2023 Lokatir Bot Team
-
-
+Celebrate your fandom, take on the quiz challenge, and may the true Roman spirit shine through! 🌟
 
 

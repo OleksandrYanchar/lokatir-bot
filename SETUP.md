@@ -18,6 +18,21 @@ sudo apt update
 git clone https://github.com/OleksandrYanchar/lokatir-bot
 ```
 
+### Here you have 2 choices:
+
+### Docker:
+
+default build:
+```bash
+docker-compose up --build
+```
+build and run in the background:
+```bash
+docker-compose up -d --build
+```
+
+### Continue manually:
+
  Set up a virtual environment:
 
 ```bash
@@ -35,8 +50,7 @@ source env/bin/activate
 pip3 install -r requirements.txt
 ```
 
-
-## Usage 
+### Usage 
 
 Navigate to the src/ directory:
 

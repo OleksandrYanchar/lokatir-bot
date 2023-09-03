@@ -12,7 +12,7 @@
 src/images/readme/old
 venv_name
 
-*.txt
+#*.txt
 *.db
 .idea
 results.txt

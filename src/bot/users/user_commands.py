@@ -79,12 +79,23 @@ async def creators(message: types.Message) ->None:
     await bot.send_message(message.chat.id, "Посилання на авторів бота:", reply_markup=markup)
 
 
+
 @dp.message_handler(commands=["HowRomanAreYou"])
 # handle the '/HowROmanAreYou' command
 # generate random numb in range 0 - 100
 async def how_roman_are_you(message: types.Message) ->None:
     procent = random.randint(0, 100)
     await message.reply(f"ви на {procent}% Роман Локатир")
+
+
+
+@dp.message_handler(commands=['HowRomanAreYou'])
+#handle the '/HowROmanAreYou' command
+#generate random numb in range 0 - 100
+async def how_roman_are_you(message: types.Message):
+    procent = random.randint(0,100)
+    await message.reply(f'ви на {procent}% Роман Локатир')
+
     for IDs in admins_ID:
         if message.chat.type == "private":
             # send loggs to admins in dm if used in private chat

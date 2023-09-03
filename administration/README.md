@@ -1,3 +1,5 @@
+# Warning! You may only need this folder if you have deployed a bot and are interested in administering it!
+
 ## File for automatic Git pull
 
 #### Make file executable:

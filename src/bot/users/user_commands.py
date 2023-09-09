@@ -3,7 +3,7 @@ from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeybo
 from aiogram import Bot, Dispatcher, types
 from datetime import datetime, timedelta
 from configs.markups import create_user_markup
-from configs.settings import chat_data, user_data, bot, dp, admins_ID, questions, results_file, creator_links
+from configs.settings import chat_data, user_data, bot, dp, admins_ID, questions, results_file, creator_links, tate_pics
 from configs.questions import original_questions
 from data_storge.users_database import UsersDatabase
 from configs.jokes import jokes
@@ -119,7 +119,7 @@ async def how_roman_are_you(message: types.Message):
 
 @dp.message_handler(commands=["ban"])
 async def ban_reply(message: types.Message) ->None:
-    with open("../pictures/quiz_pictures/tate.mp4", "rb") as tate:
+    with open(f"{tate_pics}/tate.mp4", "rb") as tate:
         await message.reply_animation(animation=tate)
 
 

@@ -7,6 +7,7 @@ from typing import List, Dict, Optional
 # Directory for photos used in the 'chupa' function
 photos_directory = "../pictures/lokatir/"
 quiz_picks = "../pictures/quiz_pictures"
+tate_pics ="../pictures/trash/"
 
 # Absolute path to the results file
 results_file = "../../results.txt"

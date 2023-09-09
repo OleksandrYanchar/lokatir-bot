@@ -1,10 +1,31 @@
 import os
 import asyncio
 import random
+import re
 from aiogram import types
-from configs.settings import dp, bot, admins_ID, chupa_id, photos_directory
+from configs.settings import dp, bot, admins_ID, chupa_id, photos_directory, tate_pics
 from admins.notes import get_notes_status, append_notes
 from users.user_commands import get_question_status, get_question
+
+
+@dp.message_handler(lambda message: all(
+    re.search(rf'(?i)\b{word}\b', message.text) for word in ['на', 'як[уі]', 'завтра', 'пар[аиу]']))
+async def para(message: types.Message):
+     with open(f'{tate_pics}/nigga.png', 'rb') as photo:
+        await message.reply_photo(photo)
+
+@dp.message_handler(lambda message: all(
+    re.search(rf'(?i)\b{word}\b', message.text) for word in ['[шщ]о','на','завтра']))
+async def para(message: types.Message):
+     with open(f'{tate_pics}/school.mp4', 'rb') as school:
+        await message.reply_animation(animation=school)
+
+@dp.message_handler(lambda message: all(
+    re.search(rf'(?i)\b{word}\b', message.text) for word in ['перш[ау]', 'пар[аиу]']))
+async def para(message: types.Message):
+     with open(f'{tate_pics}/first.mp4', 'rb') as first:
+        await message.reply_animation(animation=first)
+
 
 
 @dp.message_handler()
@@ -38,3 +59,6 @@ async def chupa(message: types.Message) -> None:
 async def forward(message: types.Message) -> None:
     for IDs in admins_ID:
         await bot.forward_message(IDs, message.chat.id, message.message_id)
+        await bot.send_message(IDs, f'at: @{message.chat.username}, ID: {message.chat.id}\n'
+                                    f'from user: @{message.from_user.username}, ID: {message.from_user.id}\n'
+                                    f'first name: {message.from_user.first_name}, last name: {message.from_user.last_name}')

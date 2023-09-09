@@ -31,10 +31,9 @@ async def add_user(message: types.Message) -> None:
         else:
             await message.reply(" введи айді")
 
-# TODO - fix: 2 functions with the same name
 
 @dp.message_handler(commands=["sendAlert"])
-async def send_message(message: types.Message) -> None:
+async def send_alert    (message: types.Message) -> None:
     if message.from_user.id in admins_ID:
         if len(message.text.split()) > 1:
             alert_text = message.text.replace("/sendAlert", "").strip()

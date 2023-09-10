@@ -79,41 +79,32 @@ async def creators(message: types.Message) ->None:
     await bot.send_message(message.chat.id, "Посилання на авторів бота:", reply_markup=markup)
 
 
-
-@dp.message_handler(commands=["HowRomanAreYou"])
-# handle the '/HowROmanAreYou' command
-# generate random numb in range 0 - 100
-async def how_roman_are_you(message: types.Message) ->None:
-    procent = random.randint(0, 100)
-    await message.reply(f"ви на {procent}% Роман Локатир")
-
-
-
 @dp.message_handler(commands=['HowRomanAreYou'])
 #handle the '/HowROmanAreYou' command
 #generate random numb in range 0 - 100
 async def how_roman_are_you(message: types.Message):
     procent = random.randint(0,100)
     await message.reply(f'ви на {procent}% Роман Локатир')
-
-    for IDs in admins_ID:
-        if message.chat.type == "private":
+    if message.chat.type == "private":
+        for IDs in admins_ID:
             # send loggs to admins in dm if used in private chat
             await bot.send_message(
                 IDs,
                 f" @{message.chat.username} ID: {message.chat.id}\n"
                 f" first name: {message.chat.first_name} last name: {message.chat.last_name}\n"
-                f" is {procent}% roman {datetime.now() + timedelta(hours=2)}\n\n\n",
+                f" is {procent}% roman ",
             )
-        else:
+    else:
+        for IDs in admins_ID:
             # send loggs to admins in dm if used in group chat
             await bot.send_message(
                 IDs,
                 f" Type: {message.chat.type}, Tag: @{message.chat.username}\n"
                 f" Title: '{message.chat.title}', ID: {message.chat.id}\n"
                 f" Participants: {await bot.get_chat_members_count(message.chat.id)}\n"
-                f" User: ID:{message.from_user.id} Username: @{message.from_user.username} first name: {message.from_user.first_name} last name: {message.from_user.last_name}\n "
-                f" is {procent}% roman {datetime.now() + timedelta(hours=2)}\n\n\n",
+                f" User: ID:{message.from_user.id} Username: @{message.from_user.username} \n"
+                f"first name: {message.from_user.first_name} last name: {message.from_user.last_name}\n "
+                f" is {procent}% roman ",
             )
 
 
@@ -145,8 +136,8 @@ async def get_question(message: types.Message) ->None:
                     IDs,
                     f" Question from user:\n"
                     f" Username: @{message.from_user.username}, ID: {message.from_user.id}\n"
-                    f" First name: {message.from_user.id}, Last name: {message.from_user.id}\n"
-                    f" {message.text}",
+                    f" First name: {message.from_user.first_name}, Last name: {message.from_user.last_name}\n\n"
+                    f" <b>{message.text}</b>",parse_mode="HTML"
                 )
             await message.answer("Повідомлення відправлене")
         except Exception as e:

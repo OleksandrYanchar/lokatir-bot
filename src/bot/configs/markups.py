@@ -17,7 +17,7 @@ def create_admin_markup() -> types.ReplyKeyboardMarkup:
 
 def create_tracks_controll_markup() -> types.ReplyKeyboardMarkup:
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add("/restartTracking", "/stopTracking", "/removeTrackID", "/addTrackID", "/tracks", "/back")
+    markup.add("/restartTracking", "/stopTracking", "/removeTrackID", "/addTrackID", "/tracks","/removeAll").add( "/back")
     return markup
 
 

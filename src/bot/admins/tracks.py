@@ -41,6 +41,12 @@ async def add_track_id(message: types.Message) -> None:
         else:
             await message.reply("Введи айді")
 
+@dp.message_handler(commands=["removeAll"])
+async def remove_all_tracks(message: types.Message) -> None:
+    global chupa_id
+    if message.from_user.id in admins_ID:
+        chupa_id = []
+        await message.answer('All tracks were deleted')
 
 @dp.message_handler(commands=["removeTrackID"])
 async def remove_track_id(message: types.Message) -> None:

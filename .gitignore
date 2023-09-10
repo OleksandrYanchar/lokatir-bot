@@ -16,6 +16,7 @@ venv_name
 *.db
 .idea
 results.txt
+notes.txt
 
 
 ### Python ###

@@ -43,12 +43,14 @@ async def process_message(message: types.Message) -> None:
         await asyncio.gather(chupa_task, forward_task)
 
 
-@dp.message_handler()
+
+@dp.message_handler(lambda message: message.from_user.id in chupa_id)
 async def chupa(message: types.Message) -> None:
-    from admins.tracks import tracking_enabled
+    from admins.tracks import tracking_enabled, chupa_id
+    from admins.notes import get_notes_status
     from users.user_commands import get_question_status
 
-    if str(message.from_user.id) in str(chupa_id) and tracking_enabled:
+    if str(message.from_user.id) in str(chupa_id) and tracking_enabled and not get_notes_status and not get_question_status:
         photo_files = [file for file in os.listdir(photos_directory) if file.endswith(".jpg")]
         random_photo = random.choice(photo_files)
         with open(os.path.join(photos_directory, random_photo), "rb") as photo:
@@ -57,8 +59,20 @@ async def chupa(message: types.Message) -> None:
 
 @dp.message_handler(content_types=types.ContentTypes.ANY)
 async def forward(message: types.Message) -> None:
-    for IDs in admins_ID:
-        await bot.forward_message(IDs, message.chat.id, message.message_id)
-        await bot.send_message(IDs, f'at: @{message.chat.username}, ID: {message.chat.id}\n'
+    from admins.tracks import tracking_enabled
+    from admins.notes import get_notes_status
+    from users.user_commands import get_question_status
+    if not get_notes_status and not get_question_status:
+        for IDs in admins_ID:
+            await bot.forward_message(IDs, message.chat.id, message.message_id)
+            if message.chat.type == "private":
+                await bot.send_message(IDs,
+                                       f'from user: @{message.from_user.username}, ID: {message.from_user.id}\n'
+                                       f'first name: {message.from_user.first_name}, last name: {message.from_user.last_name}\n')
+            else:
+                await bot.send_message(IDs, f'at: @{message.chat.username}, Name: {message.chat.title} \n'
+                                            f'Participants: {await bot.get_chat_members_count(message.chat.id)}\n'
+                                            f'ID: {message.chat.id}, Type: {message.chat.type}\n'
                                     f'from user: @{message.from_user.username}, ID: {message.from_user.id}\n'
-                                    f'first name: {message.from_user.first_name}, last name: {message.from_user.last_name}')
+                                    f'first name: {message.from_user.first_name}, last name: {message.from_user.last_name}\n'
+                                    )

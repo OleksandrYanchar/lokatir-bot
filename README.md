@@ -35,7 +35,7 @@ Given that this is our pioneering venture into Aiogram-based bots, we're all ear
 
 If you have any questions or suggestions, please contact us:
 
-- Main Developer: Email: , [GitHub](https://github.com/OleksandrYanchar)
+- Main Developer: Email: contact.oleksandryanchar@gmail.com, [GitHub](https://github.com/OleksandrYanchar)
 - Project Administrator: Email: contact.yuriidorosh@gmail.com, 
     [GitHub](https://github.com/YuriiDorosh)
 

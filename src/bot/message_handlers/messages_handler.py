@@ -9,12 +9,6 @@ from users.user_commands import get_question_status, get_question
 
 
 @dp.message_handler(lambda message: all(
-    re.search(rf'(?i)\b{word}\b', message.text) for word in ['на', 'як[уі]', 'завтра', 'пар[аиу]']))
-async def para(message: types.Message):
-     with open(f'{tate_pics}/nigga.png', 'rb') as photo:
-        await message.reply_photo(photo)
-
-@dp.message_handler(lambda message: all(
     re.search(rf'(?i)\b{word}\b', message.text) for word in ['[шщ]о','на','завтра']))
 async def para(message: types.Message):
      with open(f'{tate_pics}/school.mp4', 'rb') as school:

@@ -123,7 +123,7 @@ async def send_result_message(user_id: int, score: int) ->None:
         result_message = "Ви Локатир Романа, або його кращий друг"
         await bot.send_photo(user_id, photo=open(f"{quiz_picks}/bratva.png", "rb"))
     else:
-        result_message = "Сама ти нахуй нікому не потрібна, шмара"
+        result_message = "Дуже негативно"
         await bot.send_photo(user_id, photo=open(f"{quiz_picks}/minus.jpg", "rb"))
 
     await bot.send_message(user_id, f"Ваш рахунок: {score}")

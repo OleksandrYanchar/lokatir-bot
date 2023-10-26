@@ -25,7 +25,6 @@ async def cmd_start(message: types.Message) ->None:
     for IDs in admins_ID:
         await bot.forward_message(IDs, message.chat.id, message.message_id)
     await message.answer("Привіт, я бот-вікторина Локатира романа.", reply_markup=user_markup)
-    await message.answer_sticker("CAACAgIAAxkBAAEKFiNk4yseSJX8wQLyKT6V6MSR7K6N7AACyTAAAhL-wUt17d_gphvbujAE")
     await help_menu(message)
     if message.chat.type == "private":
         # send loggs to admins in dm and append logging txt file

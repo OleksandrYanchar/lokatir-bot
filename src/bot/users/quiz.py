@@ -124,7 +124,7 @@ async def send_result_message(user_id: int, score: int) ->None:
         await bot.send_photo(user_id, photo=open(f"{quiz_picks}/bratva.png", "rb"))
     else:
         result_message = "Дуже негативно"
-        await bot.send_photo(user_id, photo=open(f"{quiz_picks}/minus.jpg", "rb"))
+        await bot.send_photo(user_id, photo=open(f"{quiz_picks}/minus2.jpg", "rb"))
 
     await bot.send_message(user_id, f"Ваш рахунок: {score}")
     await bot.send_message(

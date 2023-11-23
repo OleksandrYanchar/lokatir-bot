@@ -1,6 +1,6 @@
 from aiogram import types
 from data_storge.users_database import UsersDatabase
-from configs.settings import bot, dp, admins_ID, start_time, results_file
+from configs.settings import bot, dp, admins_ID, start_time, results_file, tate_pics
 
 users_db = UsersDatabase()
 
@@ -77,3 +77,15 @@ async def stats(message: types.Message) -> None:
             await bot.send_document(message.chat.id, open(results_file, "rb"))
     else:
         await bot.send_message(message.chat.id, "Недостатньо прав")
+
+@dp.message_handler(commands=["chica"])
+async def chica(message: types.Message) -> None:
+    if message.from_user.id in admins_ID:
+        db_entries = users_db.get_all_entries()
+        for entry in db_entries:
+            user_id = entry[0]
+            with open(f'{tate_pics}/chica.mp4', 'rb') as chica:
+                try:
+                    await bot.send_animation(user_id, animation=chica)
+                except Exception as e:
+                    await bot.send_message(message.chat.id, f"{e}:{user_id}")

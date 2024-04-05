@@ -1,9 +1,14 @@
+import os
 import sqlite3
 from typing import List
 
 
 class UsersDatabase:
-    def __init__(self, db_name: str="../databases/user_data.db") -> None:
+    def __init__(self, db_name: str = None) -> None:
+        if db_name is None:
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            db_name = os.path.join(base_dir, '../databases', 'user_data.db')
+            
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
         self.cursor.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY);")

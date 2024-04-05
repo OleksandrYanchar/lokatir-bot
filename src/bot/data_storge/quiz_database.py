@@ -4,8 +4,11 @@ from typing import List, Tuple, Optional
 
 class QuizDatabase:
     def __init__(self, db_name: str = "quiz_database.db") -> None:
-        db_path = os.path.join(os.path.dirname(__file__), "../../databases", db_name)
-        self.conn = sqlite3.connect(db_path)
+        if db_name is None:
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            db_name = os.path.join(base_dir, '../databases', 'quiz_database.db')
+            
+        self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
         self.cursor.execute(
             """

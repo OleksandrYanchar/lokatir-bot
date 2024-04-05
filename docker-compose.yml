@@ -1,11 +1,13 @@
 version: '3.8'
-
 services:
-  bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  lokatir-bot:
+    build: .
     volumes:
-      - ./src/databases:/lokatir_bot/src/databases
-    environment:
+      - db-data:/lokatir_bot/src/databases
+    env_file:
+      - .env
     restart: always
+
+volumes:
+  db-data:
+    driver: local
